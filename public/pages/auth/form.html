@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register Here</title>
+
+  <!-- ❌ CSS ME KOI CHANGE NAHI -->
+  <link rel="stylesheet" href="../css/components/form.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+
+  <style>
+    .form-group {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+
+    .form-group span {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      font-size: 0.75em;
+      color: red;
+      display: none;
+    }
+
+    #firstNameError,
+    #lastNameError,
+    #emailError,
+    #error-msg,
+    #phoneError {
+      font-size: 0.75em;
+      color: red;
+    }
+  </style>
+</head>
+
+<body onload="loadPage()">
+
+  <div class="headings">
+    <h1>Registration</h1>
+    <h3>Research Innovation & Discovery</h3>
+  </div>
+
+  <!-- ✅ SINGLE FORM (MOST IMPORTANT FIX) -->
+  <form action="/user/register" method="POST" id="registerForm">
+
+    <!-- ================= STEP 1 ================= -->
+    <div class="container" id="container1" style="display:block;">
+
+      <div class="img">
+        <div class="container-process">
+          <div class="line-1">
+            <div class="cicle-1 active-circle"><p>1</p></div>
+            <div class="cicle-2"><p>2</p></div>
+            <div class="cicle-3"><p>3</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="form1">
+
+        <div class="form-group">
+          <label>First Name <span style="color:red">*</span></label>
+          <input type="text" id="firstName" name="username">
+          <span id="firstNameError">Invalid first name</span>
+        </div>
+
+        <div class="form-group">
+          <label>Last Name <span style="color:red">*</span></label>
+          <input type="text" id="lastName" name="lastname">
+          <span id="lastNameError">Invalid last name</span>
+        </div>
+
+        <div class="form-group">
+          <label>Email <span style="color:red">*</span></label>
+          <input type="email" id="email" name="email">
+          <span id="emailError">Invalid email</span>
+        </div>
+
+        <div class="form-group">
+          <label>Password <span style="color:red">*</span></label>
+          <input type="password" id="password" name="password" >
+          <span id="error-msg">Weak password</span>
+        </div>
+
+      </div>
+
+      <!-- ❌ submit NAHI -->
+      <button type="button" id="nextButton" disabled>Next</button>
+    </div>
+
+    <!-- ================= STEP 2 ================= -->
+    <div class="container" id="container3" style="display:none;">
+
+      <div class="img">
+        <div class="container-process">
+          <div class="line-1 line-2">
+            <div class="cicle-1 active-circle-done"><p>1</p></div>
+            <div class="cicle-2 active-circle"><p>2</p></div>
+            <div class="cicle-3"><p>3</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="form3">
+
+        <div class="form-group">
+          <label>Gender *</label>
+          <select name="gender" required>
+            <option value="">Select Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Mobile *</label>
+          <input type="tel" id="phone" name="phone" required>
+          <span id="phoneError">Only 10 digits allowed</span>
+        </div>
+
+        <div class="form-group">
+          <label>DOB *</label>
+          <input type="date" id="dob" name="dob" required>
+        </div>
+
+        <div class="form-group">
+          <label>Role *</label>
+          <select name="role" required>
+            <option value="">Select Role</option>
+            <option value="organisation">Organisation</option>
+            <option value="student">Student</option>
+            <option value="teacher">Teacher</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="buttons">
+        <button type="button" id="PreviousBtn">Previous</button>
+        <!-- ✅ ONLY REAL SUBMIT -->
+        <button type="submit" id="sumit-btn">Submit</button>
+      </div>
+    </div>
+
+  </form>
+  <!-- ✅ FORM END -->
+
+  <!-- ================= JS (CSS TOUCH NAHI) ================= -->
+  <script>
+    function loadPage() {
+      document.getElementById("container1").style.display = "block";
+    }
+
+    const firstName = document.getElementById("firstName");
+    const lastName = document.getElementById("lastName");
+    const email = document.getElementById("email");
+    const password = document.getElementById("password");
+    const nextButton = document.getElementById("nextButton");
+
+    function validateForm() {
+      nextButton.disabled = !(firstName.value && lastName.value && email.value && password.value);
+    }
+
+    [firstName, lastName, email, password].forEach(el =>
+      el.addEventListener("input", validateForm)
+    );
+
+    nextButton.onclick = () => {
+      document.getElementById("container1").style.display = "none";
+      document.getElementById("container3").style.display = "flex";
+    };
+
+    document.getElementById("PreviousBtn").onclick = () => {
+      document.getElementById("container3").style.display = "none";
+      document.getElementById("container1").style.display = "flex";
+    };
+
+    document.getElementById("phone").addEventListener("input", e => {
+      e.target.value = e.target.value.replace(/\D/g, "");
+    });
+
+    const d = new Date();
+    d.setFullYear(d.getFullYear() - 10);
+    document.getElementById("dob").max = d.toISOString().split("T")[0];
+  </script>
+
+</body>
+</html>

@@ -255,48 +255,48 @@ const configureRoutes = () => {
   });
 
   app.get("/teacher", authenticateJWT, roleMiddleware("teacher"), (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "teacher.html"));
+    res.sendFile(path.join(__dirname, "public/pages/dashboard/teacher.html"));
   });
 
   app.get("/student", authenticateJWT, roleMiddleware("student"), (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "student.html"));
+    res.sendFile(path.join(__dirname, "public/pages/dashboard/student.html"));
   });
 
   app.get("/admin", authenticateJWT, roleMiddleware("admin"), (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "Admin/admin.html"));
+    res.sendFile(path.join(__dirname, "public/pages/admin/admin.html"));
   });
 
   app.get("/reset-password", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "Reset-Password/reset-password.html"));
+    res.sendFile(path.join(__dirname, "public/pages/auth/reset-password.html"));
   });
 
   app.get("/forgot-password", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "Forgot-Password/forgot-password.html"));
+    res.sendFile(path.join(__dirname, "public/pages/auth/forgot-password.html"));
   });
 
   app.get("/form", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "Signup/form.html"));
+    res.sendFile(path.join(__dirname, "public/pages/auth/form.html"));
   });
 
   app.get("/onlineTest", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "component/onlineTest.html"));
+    res.sendFile(path.join(__dirname, "public/pages/component/onlineTest.html"));
   });
 
   app.get("/login", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "Login/login.html"));
+    res.sendFile(path.join(__dirname, "public/pages/auth/login.html"));
   });
 
   app.get("/verify", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "Certificate-Verification/verify.html"));
+    res.sendFile(path.join(__dirname, "public/pages/certificate/verify.html"));
   });
 
   // ========== WORKSHOP FORM PAGE ==========
   app.get("/workshop-form", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "workshop/form.html"));
+    res.sendFile(path.join(__dirname, "public/pages/workshop/form.html"));
   });
 
   app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "index.html"));
+    res.sendFile(path.join(__dirname, "public/pages/auth/index.html"));
   });
 
   app.get("/searchResult", (req, res) => {
@@ -304,20 +304,20 @@ const configureRoutes = () => {
   });
 
   app.get("/serverpdf", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "serverpdf.html"));
+    res.sendFile(path.join(__dirname, "public/pages/certificate/serverpdf.html"));
   });
 
   // ========== CERTIFICATE STATIC ROUTES ==========
   app.get("/certificate", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "Certificate-Verification/certificate.html"));
+    res.sendFile(path.join(__dirname, "public/pages/certificate/certificate.html"));
   });
 
   app.get("/apply-certificate", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "Certificate-Verification/Applay-certificate.html"));
+    res.sendFile(path.join(__dirname, "public/pages/certificate/Applay-certificate.html"));
   });
 
   app.get("/ebook", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "ebook.html"));
+    res.sendFile(path.join(__dirname, "public/pages/ebook/ebook.html"));
   });
 
   app.get("/get-pdf", (req, res) => {
@@ -350,7 +350,7 @@ const configureRoutes = () => {
 
   // ========== CATCH-ALL 404 ==========
   app.use((req, res) => {
-    res.status(404).sendFile(path.join(__dirname, "public", "404/404.html"));
+    res.status(404).sendFile(path.join(__dirname, "public/pages/errors/404.html"));
   });
 };
 
