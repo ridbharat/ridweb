@@ -11,9 +11,8 @@ const {
   getPdfsCount,
 } = require("../controllers/adminController");
 const multer = require("multer");
-const authenticateJWT = require("../middleware/authMiddleware");
-const authorizeRole = require("../middleware/authorizeRole");
-const User = require("../models/user"); // Adjust the path as necessary
+const { authenticateJWT, authorizeRole } = require("../middleware/auth");
+const User = require("../schema/models/users.generated"); // Adjust the path as necessary
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });

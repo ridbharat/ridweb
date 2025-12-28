@@ -32,11 +32,13 @@
 
 const express = require("express");
 const router = express.Router();
-const { isAuthenticated } = require("../middleware/isAuthenticated");
+const { isAuthenticated } = require("../middleware/auth");
 const userController = require("../controllers/userController");
-const User = require("../models/user");
+const User = require("../schema/models/users.generated");
+const { validateBody } = require("../middleware/validation");
+const { userRegistrationSchema } = require("../schema/users.zod");
 
-router.post("/register", userController.registerUser);
+router.post("/register", validateBody(userRegistrationSchema), userController.registerUser);
 
 
 router.get("/me", isAuthenticated, async (req, res) => {

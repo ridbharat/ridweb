@@ -1,0 +1,95 @@
+const fs = require("fs");
+const path = require("path");
+require("dotenv").config();
+const prompt = require("prompt-sync")({ sigint: true });
+const B2 = require("backblaze-b2");
+
+// Load env vars
+const accountId = process.env.B2_ACCOUNT_ID;
+const applicationKey = process.env.B2_APPLICATION_KEY;
+const bucketName = process.env.B2_BUCKET_NAME;
+
+if (!accountId || !applicationKey || !bucketName) {
+  console.error("Error: Missing required environment variables in .env file.");
+  console.error(
+    "Please ensure B2_ACCOUNT_ID, B2_APPLICATION_KEY, and B2_BUCKET_NAME are set.",
+  );
+  process.exit(1);
+}
+
+// Init B2
+const b2 = new B2({
+  applicationKeyId: accountId,
+  applicationKey: applicationKey,
+});
+
+async function main() {
+  // Authenticate
+  await b2.authorize();
+
+  // Get bucket list
+  const bucketsRes = await b2.listBuckets();
+  const bucket = bucketsRes.data.buckets.find(
+    (b) => b.bucketName === bucketName,
+  );
+
+  if (!bucket) {
+    console.error(`Bucket '${bucketName}' not found`);
+    process.exit(1);
+  }
+
+  const bucketId = bucket.bucketId;
+
+  // List files
+  console.log("Files in bucket:");
+  const fileNames = [];
+
+  let nextFileName = null;
+
+  do {
+    const res = await b2.listFileNames({
+      bucketId,
+      startFileName: nextFileName || undefined,
+      maxFileCount: 1000,
+    });
+
+    for (const file of res.data.files) {
+      console.log(`- ${file.fileName}`);
+      fileNames.push(file.fileName);
+    }
+
+    nextFileName = res.data.nextFileName;
+  } while (nextFileName);
+
+  // Prompt user
+  const fileName = prompt("\nEnter the file name to download: ").trim();
+
+  if (!fileName) {
+    console.log("No file name entered. Exiting.");
+    process.exit(0);
+  }
+
+  if (!fileNames.includes(fileName)) {
+    console.error(`File '${fileName}' not found in bucket.`);
+    process.exit(1);
+  }
+
+  // Download
+  const downloadPath = path.join(process.cwd(), fileName);
+  fs.mkdirSync(path.dirname(downloadPath), { recursive: true });
+
+  const downloadRes = await b2.downloadFileByName({
+    bucketName,
+    fileName,
+    responseType: "arraybuffer",
+  });
+
+  fs.writeFileSync(downloadPath, Buffer.from(downloadRes.data));
+
+  console.log(`Downloaded '${fileName}' to ${downloadPath}`);
+}
+
+main().catch((err) => {
+  console.error("Error:", err);
+  process.exit(1);
+});

@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const passport = require("passport");
 const cookieParser = require("cookie-parser");
 const helmet = require('helmet');
-const MongoStore = require('connect-mongo');
+
 const cors = require("cors");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
@@ -18,44 +18,38 @@ const app = express();
 const port = process.env.PORT || 9191;
 
 
-const mongoUrl = process.env.MONGODB_URI;
+// MongoDB connection removed - not using MongoDB
+// const mongoUrl = process.env.MONGODB_URI;
 
-console.log('🔗 Attempting MongoDB Atlas connection...');
+// console.log('🔗 Attempting MongoDB Atlas connection...');
 
-mongoose.connect(mongoUrl, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    serverSelectionTimeoutMS: 5000,
-    socketTimeoutMS: 45000,
-})
-.then(async () => {
-    console.log('✅ MongoDB Atlas Connected Successfully');
-   
-    
-    // Check if 'applications' collection exists
-    const collections = await mongoose.connection.db.listCollections().toArray();
-    const appCollectionExists = collections.some(c => c.name === 'applications');
-    
-    if (!appCollectionExists) {
-        console.log('📝 Creating applications collection...');
-        // Create collection if it doesn't exist
-        await mongoose.connection.db.createCollection('applications');
-        console.log('✅ Created applications collection');
-    }
-    
-    // Create indexes for better performance
-    const Application = require('./models/Application');
-    await Application.createIndexes();
-    
-})
-.catch(err => {
-    console.error(' MongoDB Atlas Connection Error:', err.message);
-    console.error(' Troubleshooting Steps:');
-    console.error('   1. Check your MongoDB Atlas cluster is running');
-    console.error('   2. Verify IP is whitelisted in Network Access');
-    console.error('   3. Check username/password in connection string');
-    console.error('   4. Check database name in connection string');
-    process.exit(1);
+// mongoose.connect(mongoUrl, {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//     serverSelectionTimeoutMS: 5000,
+//     socketTimeoutMS: 45000,
+// })
+// .then(async () => {
+//     console.log('✅ Connected to MongoDB Atlas');
+//     // Start server after DB connection
+//     app.listen(port, () => {
+//         console.log(`✅ Server is running on http://localhost:${port}`);
+//     });
+// })
+// .catch((err) => {
+//     console.error('❌ MongoDB Atlas Connection Error:', err.message);
+//     console.log('Troubleshooting Steps:');
+//     console.log('   1. Check your MongoDB Atlas cluster is running');
+//     console.log('   2. Verify IP is whitelisted in Network Access');
+//     console.log('   3. Check username/password in connection string');
+//     console.log('   4. Check database name in connection string');
+//     process.exit(1);
+// });
+
+// Start server without DB
+const server = app.listen(port, () => {
+    const assignedPort = server.address().port;
+    console.log(`✅ Server is running on http://localhost:${assignedPort}`);
 });
 
 // ========== SESSION CONFIGURATION ==========
@@ -63,11 +57,6 @@ app.use(session({
     secret: process.env.SESSION_SECRET || crypto.randomBytes(64).toString("hex"),
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({
-        mongoUrl: mongoUrl,
-        collectionName: 'sessions',
-        ttl: 24 * 60 * 60 // 1 day in seconds
-    }),
     cookie: {
         maxAge: 24 * 60 * 60 * 1000,
         httpOnly: true,
@@ -159,7 +148,7 @@ const configureRoutes = () => {
   const authRoutes = require("./routes/authRoutes");
   const adminRoutes = require("./routes/admin");
   const verifyRoutes = require("./routes/verify");
-  const authenticateJWT = require("./middleware/authMiddleware");
+  const { authenticateJWT } = require("./middleware/auth");
 
   // Certificate routes
   const applicationRoutes = require("./routes/applicationRoutes");
@@ -195,8 +184,8 @@ const configureRoutes = () => {
   // });
 
   // ========== VIEW ROUTES ==========
-  const Organisation = require("./models/Organisation");
-  const Book = require("./models/Book");
+  const Organisation = require("./schema/models/organisation.generated");
+  const Book = require("./schema/models/books.generated");
 
   app.get("/books", async (req, res) => {
     try {
@@ -370,7 +359,4 @@ configureViews();
 configureRoutes();
 
 // ========== START SERVER ==========
-app.listen(port, () => {
-  console.log(`\n✅ Server is running on http://localhost:${port}`);
-  
-});
+// Server started above

@@ -44,19 +44,22 @@ function awakeAction() {
 
 
 
-// 1. Array of all PDF file paths
-const pdfList = [
-  "../ebookdata/JavaScript E-Book.pdf",
-  "../ebookdata/RID A-Z English Hindi Dictionary E-Book.pdf",
-  "../ebookdata/Linux E-Book.pdf",
-  "../ebookdata/HTML Beginner Guide.pdf",
-  "../ebookdata/CSS3 Mastery.pdf",
-  "../ebookdata/Python for Beginners.pdf",
-  "../ebookdata/NodeJS Handbook.pdf",
-  "../ebookdata/ReactJS Quickstart.pdf",
-  "../ebookdata/Data Structures in C.pdf",
-  "../ebookdata/Algorithms Explained.pdf"
+// 1. Array of all PDF filenames
+const pdfFiles = [
+  "JavaScript E-Book.pdf",
+  "RID A-Z English Hindi Dictionary E-Book.pdf",
+  "Linux E-Book.pdf",
+  "HTML Beginner Guide.pdf",
+  "CSS3 Mastery.pdf",
+  "Python for Beginners.pdf",
+  "NodeJS Handbook.pdf",
+  "ReactJS Quickstart.pdf",
+  "Data Structures in C.pdf",
+  "Algorithms Explained.pdf"
 ];
+
+let pdfList = [];
+let pdfUrl = '';
 
 // 2. Function to get URL query parameter
 const getQueryParam = (key) => {
@@ -64,23 +67,39 @@ const getQueryParam = (key) => {
   return params.get(key);
 };
 
-// 3. Get index from query string
-const fileIndex = parseInt(getQueryParam("file")) || 0;
-const pdfUrl = pdfList[fileIndex];
+// 3. Load URLs from server
+async function loadUrls() {
+  try {
+    const promises = pdfFiles.map(file =>
+      fetch(`/ebook/get-url/${encodeURIComponent(file)}`)
+        .then(r => r.json())
+        .then(d => d.url)
+    );
+    pdfList = await Promise.all(promises);
 
-if (!pdfUrl || fileIndex >= pdfList.length) {
-  document.getElementById("pdf-render").innerHTML = "Invalid or missing PDF file selection.";
-} else {
-  // PDF.js loading code
-  pdfjsLib.getDocument(pdfUrl).promise
-    .then((doc) => {
-      pdfDoc = doc;
-      updatePageInfo();
-      renderPage(pageNum);
-      document.getElementById("download-btn").style.display = "inline-block";
-    })
-    .catch((err) => {
-      console.error("Error loading PDF:", err);
-      pdfRender.innerHTML = "Failed to load PDF. Please check the file path or try again.";
-    });
+    const fileIndex = parseInt(getQueryParam("file")) || 0;
+    pdfUrl = pdfList[fileIndex];
+
+    if (!pdfUrl || fileIndex >= pdfList.length) {
+      document.getElementById("pdf-render").innerHTML = "Invalid or missing PDF file selection.";
+    } else {
+      // PDF.js loading code
+      pdfjsLib.getDocument(pdfUrl).promise
+        .then((doc) => {
+          pdfDoc = doc;
+          updatePageInfo();
+          renderPage(pageNum);
+          document.getElementById("download-btn").style.display = "inline-block";
+        })
+        .catch((err) => {
+          console.error("Error loading PDF:", err);
+          pdfRender.innerHTML = "Failed to load PDF. Please check the file path or try again.";
+        });
+    }
+  } catch (error) {
+    console.error("Error loading URLs:", error);
+    document.getElementById("pdf-render").innerHTML = "Failed to load PDF URLs.";
+  }
 }
+
+loadUrls();

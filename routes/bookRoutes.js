@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const bookController = require("../controllers/bookController");
-const Book = require("../models/ebookModel");
+const Book = require("../schema/models/books.generated");
 router.get("/ebook-upload", (req, res) => {
   res.sendFile("BooksUpload.html", { root: __dirname + "/./public" });
 });

@@ -1,4 +1,4 @@
-const WorkshopApplication = require('../models/workshopmodels');
+const WorkshopApplication = require('../schema/models/workshop.generated');
 const nodemailer = require('nodemailer');
 const PDFDocument = require('pdfkit');
 const path = require('path');

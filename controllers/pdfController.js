@@ -1,7 +1,8 @@
-const PDF = require('../models/PDF');
+const PDF = require('../schema/models/pdf.generated');
 const fs = require('fs').promises;
 const path = require('path');
 const crypto = require('crypto');
+const { getEbookUrl } = require('../utils/backblazeEbook');
 
 // ✅ Regular fs module import for createReadStream
 const fsRegular = require('fs');
@@ -72,14 +73,20 @@ exports.dashboard = async (req, res) => {
             'downloads': { downloadCount: -1 }
         };
 
-        const [pdfs, total, stats, categories] = await Promise.all([
+        const [pdfs, total, categories] = await Promise.all([
             PDF.find(query)
                 .sort(sortOptions[sort] || sortOptions.newest)
                 .skip(skip)
                 .limit(limit)
                 .lean(),
             PDF.countDocuments(query),
-            PDF.aggregate([
+            PDF.distinct('category')
+        ]);
+
+        // Compute stats with timeout handling
+        let stats = [];
+        try {
+            stats = await PDF.aggregate([
                 {
                     $group: {
                         _id: null,
@@ -90,9 +97,11 @@ exports.dashboard = async (req, res) => {
                         totalSize: { $sum: '$fileSize' }
                     }
                 }
-            ]),
-            PDF.distinct('category')
-        ]);
+            ]).maxTimeMS(5000); // 5 second timeout
+        } catch (statsError) {
+            console.warn('Stats calculation timed out, using defaults:', statsError.message);
+            stats = [];
+        }
 
         const totalPages = Math.ceil(total / limit);
         const currentPage = parseInt(page);
@@ -125,7 +134,7 @@ exports.dashboard = async (req, res) => {
         });
     } catch (error) {
         console.error('Dashboard Error:', error);
-        res.status(500).render('error', {
+        res.status(500).render('ebook/error', {
             title: 'Server Error',
             message: 'Unable to load dashboard. Please try again later.',
             basePath: '/ebook'
@@ -137,7 +146,7 @@ exports.dashboard = async (req, res) => {
 exports.uploadForm = async (req, res) => {
     try {
         const pdfs = await PDF.find().sort({ uploadDate: -1 }).limit(20);
-        res.render('upload', { 
+        res.render('ebook/upload', {
             pdfs,
             success: req.query.success,
             error: req.query.error,
@@ -146,7 +155,7 @@ exports.uploadForm = async (req, res) => {
         });
     } catch (error) {
         console.error('Upload Form Error:', error);
-        res.status(500).render('error', {
+        res.status(500).render('ebook/error', {
             title: 'Server Error',
             message: 'Unable to load upload form. Please try again later.',
             basePath: '/ebook'
@@ -159,7 +168,7 @@ exports.uploadPDF = async (req, res) => {
     try {
         if (!req.files?.pdf) {
             const pdfs = await PDF.find().sort({ uploadDate: -1 }).limit(20);
-            return res.status(400).render('upload', {
+            return res.status(400).render('ebook/upload', {
                 error: 'PDF file is required',
                 pdfs,
                 formData: req.body,
@@ -205,7 +214,7 @@ exports.uploadPDF = async (req, res) => {
             if (coverFile) await safeDeleteFile(coverFile.path);
             
             const pdfs = await PDF.find().sort({ uploadDate: -1 }).limit(20);
-            return res.status(400).render('upload', {
+            return res.status(400).render('ebook/upload', {
                 error: 'PDF file must be less than 50MB',
                 pdfs,
                 formData: req.body,
@@ -257,7 +266,7 @@ exports.uploadPDF = async (req, res) => {
         if (req.files?.coverImage) await safeDeleteFile(req.files.coverImage[0].path);
 
         const pdfs = await PDF.find().sort({ uploadDate: -1 }).limit(20);
-        res.status(500).render('upload', {
+        res.status(500).render('ebook/upload', {
             error: 'Failed to upload book: ' + error.message,
             pdfs,
             formData: req.body,
@@ -271,7 +280,7 @@ exports.viewPDF = async (req, res) => {
     try {
         const pdf = await PDF.findById(req.params.id);
         if (!pdf) {
-            return res.status(404).render('404', {
+            return res.status(404).render('ebook/404', {
                 title: 'Book Not Found',
                 message: 'The requested book could not be found.',
                 basePath: '/ebook'
@@ -288,13 +297,13 @@ exports.viewPDF = async (req, res) => {
         pdf.viewCount = (pdf.viewCount || 0) + 1;
         await pdf.save();
 
-        res.render('viewer', { 
+        res.render('ebook/viewer-secure', {
             pdf,
             basePath: '/ebook'
         });
     } catch (error) {
         console.error('View PDF Error:', error);
-        res.status(500).render('error', {
+        res.status(500).render('ebook/error', {
             title: 'Server Error',
             message: 'Unable to load the book. Please try again.',
             basePath: '/ebook'
@@ -311,7 +320,7 @@ exports.secureViewPDF = async (req, res) => {
         const pdf = await PDF.findById(pdfId);
         if (!pdf) {
             console.log('❌ PDF not found with ID:', pdfId);
-            return res.status(404).render('404', {
+            return res.status(404).render('ebook/404', {
                 title: 'Book Not Found',
                 message: 'The requested book could not be found.',
                 basePath: '/ebook'
@@ -353,7 +362,7 @@ exports.secureViewPDF = async (req, res) => {
             securityFeatures: ['print_protection', 'download_protection', 'screenshot_protection']
         });
 
-        res.render('viewer-secure', { 
+        res.render('ebook/viewer-secure', {
             pdf,
             sessionToken,
             security: {
@@ -370,7 +379,7 @@ exports.secureViewPDF = async (req, res) => {
 
     } catch (error) {
         console.error('❌ Secure View PDF Error:', error);
-        res.status(500).render('error', {
+        res.status(500).render('ebook/error', {
             title: 'Security Error',
             message: 'Unable to load book in secure mode. Please try again.',
             basePath: '/ebook'
@@ -494,7 +503,7 @@ exports.downloadPDF = async (req, res) => {
     try {
         const pdf = await PDF.findById(req.params.id);
         if (!pdf) {
-            return res.status(404).render('404', {
+            return res.status(404).render('ebook/404', {
                 title: 'Book Not Found',
                 message: 'The requested book could not be found.',
                 basePath: '/ebook'
@@ -510,7 +519,7 @@ exports.downloadPDF = async (req, res) => {
                 message: 'Download feature is permanently disabled'
             });
             
-            return res.status(403).render('error', {
+            return res.status(403).render('ebook/error', {
                 title: 'Download Disabled',
                 message: 'Download access is permanently disabled for security reasons. Please use the secure viewer.',
                 basePath: '/ebook'
@@ -523,7 +532,7 @@ exports.downloadPDF = async (req, res) => {
         try {
             await fs.access(filePath);
         } catch (error) {
-            return res.status(404).render('error', {
+            return res.status(404).render('ebook/error', {
                 title: 'File Not Found',
                 message: 'The PDF file could not be found on the server.',
                 basePath: '/ebook'
@@ -545,7 +554,7 @@ exports.downloadPDF = async (req, res) => {
 
     } catch (error) {
         console.error('Download Error:', error);
-        res.status(500).render('error', {
+        res.status(500).render('ebook/error', {
             title: 'Download Error',
             message: 'Unable to download the file. Please try again.',
             basePath: '/ebook'
@@ -558,14 +567,14 @@ exports.editForm = async (req, res) => {
     try {
         const pdf = await PDF.findById(req.params.id);
         if (!pdf) {
-            return res.status(404).render('404', {
+            return res.status(404).render('ebook/404', {
                 title: 'Book Not Found',
                 message: 'The requested book could not be found.',
                 basePath: '/ebook'
             });
         }
 
-        res.render('edit', { 
+        res.render('ebook/edit', {
             pdf,
             error: req.query.error,
             // ✅ ADDED: basePath for /ebook routing
@@ -573,7 +582,7 @@ exports.editForm = async (req, res) => {
         });
     } catch (error) {
         console.error('Edit Form Error:', error);
-        res.status(500).render('error', {
+        res.status(500).render('ebook/error', {
             title: 'Server Error',
             message: 'Unable to load edit form. Please try again later.',
             basePath: '/ebook'
@@ -625,7 +634,7 @@ exports.editPDF = async (req, res) => {
         console.error('Edit PDF Error:', error);
         
         const pdf = await PDF.findById(req.params.id);
-        res.status(500).render('edit', {
+        res.status(500).render('ebook/edit', {
             pdf,
             error: 'Failed to update book: ' + error.message,
             basePath: '/ebook'
@@ -658,7 +667,7 @@ exports.deletePDF = async (req, res) => {
         res.redirect('/ebook/upload?success=Book deleted successfully');
     } catch (error) {
         console.error('Delete PDF Error:', error);
-        res.status(500).render('error', {
+        res.status(500).render('ebook/error', {
             title: 'Delete Error',
             message: 'Failed to delete book. Please try again.',
             basePath: '/ebook'
@@ -1022,5 +1031,17 @@ exports.cleanupExpiredTokens = async (req, res) => {
     } catch (error) {
         console.error('Cleanup tokens error:', error);
         res.status(500).json({ error: 'Cleanup failed' });
+    }
+};
+
+// Get B2 URL for ebook
+exports.getEbookUrl = async (req, res) => {
+    try {
+        const fileName = req.params.filename;
+        const url = await getEbookUrl(fileName);
+        res.json({ url });
+    } catch (error) {
+        console.error('Get ebook URL error:', error);
+        res.status(500).json({ error: error.message });
     }
 };

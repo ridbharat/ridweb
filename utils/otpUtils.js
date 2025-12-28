@@ -1,4 +1,4 @@
-const User = require("../models/user");
+const User = require("../schema/models/users.generated");
 
 // Store OTP and its expiry in the database
 exports.storeOTP = async (email, otp) => {

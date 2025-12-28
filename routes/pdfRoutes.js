@@ -3,6 +3,18 @@ const router = express.Router();
 const pdfController = require('../controllers/pdfController');
 const { upload, handleUploadErrors } = require('../middleware/upload');
 const { requireAuth } = require('../middleware/auth');
+const { validateBody } = require('../middleware/validation');
+const { z } = require('zod');
+
+// Schema for book upload metadata
+const bookUploadSchema = z.object({
+  title: z.string().min(1, "Title is required").max(200, "Title too long"),
+  author: z.string().min(1, "Author is required"),
+  description: z.string().min(10, "Description too short").max(1000, "Description too long"),
+  category: z.enum(["technical", "non-technical", "fiction", "non-fiction", "educational", "other"]),
+  tags: z.string().optional().transform(val => val ? val.split(',').map(t => t.trim()) : []),
+  rating: z.string().optional().transform(val => val ? parseFloat(val) : 4.0),
+});
 
 // ==================== HEALTH & SECURITY ROUTES ====================
 router.get('/health', (req, res) => {
@@ -54,6 +66,7 @@ router.get('/secure-viewer/:id', pdfController.secureViewPDF);
 // ==================== API ROUTES ====================
 router.get('/api/stats', pdfController.getStats);
 router.get('/api/stream-pdf', pdfController.streamPDF);
+router.get('/get-url/:filename', pdfController.getEbookUrl);
 
 // ==================== SECURITY ROUTES ====================
 router.post('/api/security/log', pdfController.logSecurityEvent);

@@ -1,4 +1,4 @@
-const pdfUrl = "../ebookdata/HTML E-BOOK.pdf"; // Replace with your PDF path
+let pdfUrl = ""; // Will be set from server
 let pdfDoc = null;
 let pageNum = 1;
 let pageIsRendering = false;
@@ -89,20 +89,33 @@ const downloadPDF = () => {
   link.click();
 };
 
-// Get the document
-pdfjsLib
-  .getDocument(pdfUrl)
-  .promise.then((doc) => {
-    pdfDoc = doc;
-    updatePageInfo();
-    renderPage(pageNum);
-    document.getElementById("download-btn").style.display = "inline-block"; // Show the download button
-  })
-  .catch((err) => {
-    console.error("Error loading PDF:", err);
-    pdfRender.innerHTML =
-      "Failed to load PDF. Please check the file path or try again.";
-  });
+// Load PDF URL and document
+async function loadPDF() {
+  try {
+    const response = await fetch('/ebook/get-url/HTML E-BOOK.pdf');
+    const data = await response.json();
+    pdfUrl = data.url;
+
+    pdfjsLib
+      .getDocument(pdfUrl)
+      .promise.then((doc) => {
+        pdfDoc = doc;
+        updatePageInfo();
+        renderPage(pageNum);
+        document.getElementById("download-btn").style.display = "inline-block"; // Show the download button
+      })
+      .catch((err) => {
+        console.error("Error loading PDF:", err);
+        pdfRender.innerHTML =
+          "Failed to load PDF. Please check the file path or try again.";
+      });
+  } catch (error) {
+    console.error("Error loading PDF URL:", error);
+    pdfRender.innerHTML = "Failed to load PDF URL.";
+  }
+}
+
+loadPDF();
 
 // Button event listeners
 document.getElementById("prev-page").addEventListener("click", showPrevPage);

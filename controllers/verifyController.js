@@ -1,4 +1,4 @@
-const Certificate = require("../models/certificate");
+const Certificate = require("../schema/models/certificates.generated");
 
 // Controller to handle certificate verification
 const verifyCertificate = async (req, res) => {

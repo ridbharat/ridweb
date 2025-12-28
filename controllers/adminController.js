@@ -1,7 +1,7 @@
-const Certificate = require("../models/certificate");
-const User = require("../models/user");
+const Certificate = require("../schema/models/certificates.generated");
+const User = require("../schema/models/users.generated");
+const Book = require("../schema/models/books.generated");
 const multer = require("multer");
-const Book = require("../models/ebookModel");
 // Configure multer for handling file uploads
 const storage = multer.memoryStorage();
 const upload = multer({ storage });

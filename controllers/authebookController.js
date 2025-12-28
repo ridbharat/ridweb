@@ -1,4 +1,4 @@
-const User = require('../models/EbookUser');
+const User = require('../schema/models/ebookuser.generated');
 
 // ✅ FIXED: Login page with basePath
 exports.loginPage = (req, res) => {

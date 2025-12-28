@@ -202,8 +202,8 @@ The application follows the Model-View-Controller architectural pattern:
 │   ├── otpUtils.js         # OTP generation
 │   ├── sendEmail.js        # Email sending utilities
 │   ├── showToast.js        # Toast notification utilities
-│   ├── cloudinaryorg.js    # Cloudinary organization utils
-│   └── cloudinaryService.js # Cloudinary service
+│   ├── backblazeorg.js     # Backblaze organization utils
+│   └── backblazeService.js  # Backblaze service
 ├── views/
 │   ├── ebook/              # E-book related templates
 │   ├── 404.ejs             # Error page

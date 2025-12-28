@@ -1,6 +1,6 @@
 const path = require("path");
 const fs = require("fs");
-const Application = require("../models/Application");
+const Application = require("../schema/models/applications.generated");
 const nodemailer = require("nodemailer");
 const PDFDocument = require("pdfkit");
 // ✅ ALWAYS absolute path

@@ -1,5 +1,5 @@
-const Organisation = require("../models/Organisation");
-const { uploadedToCloudinary } = require("../utils/cloudinaryorg");
+const Organisation = require("../schema/models/organisation.generated");
+const { uploadedToBackblaze } = require("../utils/backblazeorg");
 
 // Register Organization
 const registerOrganisation = async (req, res) => {
@@ -17,8 +17,8 @@ const registerOrganisation = async (req, res) => {
     const certificateFile2 = req.files.certificateFile2[0].buffer;
     const certificateFile3 = req.files.certificateFile3[0].buffer;
 
-    // Upload to Cloudinary using buffer
-    const uploadedCertificateFile1 = await uploadedToCloudinary(
+    // Upload to Backblaze using buffer
+    const uploadedCertificateFile1 = await uploadedToBackblaze(
       certificateFile1,
       "org/certificate1"
     );
@@ -27,7 +27,7 @@ const registerOrganisation = async (req, res) => {
       uploadedCertificateFile1.secure_url
     );
 
-    const uploadedCertificateFile2 = await uploadedToCloudinary(
+    const uploadedCertificateFile2 = await uploadedToBackblaze(
       certificateFile2,
       "org/certificate2"
     );
@@ -36,7 +36,7 @@ const registerOrganisation = async (req, res) => {
       uploadedCertificateFile2.secure_url
     );
 
-    const uploadedCertificateFile3 = await uploadedToCloudinary(
+    const uploadedCertificateFile3 = await uploadedToBackblaze(
       certificateFile3,
       "org/certificate3"
     );

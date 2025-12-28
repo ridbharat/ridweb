@@ -1,5 +1,5 @@
-const Book = require("../models/ebookModel");
-const { uploadToCloudinary } = require("../utils/cloudinaryService");
+const Book = require("../schema/models/books.generated");
+const { uploadToBackblaze } = require("../utils/backblazeService");
 
 exports.addBook = async (req, res) => {
   const { title, author, publishYear, rating, description } = req.body;
@@ -16,15 +16,15 @@ exports.addBook = async (req, res) => {
     console.log("Image details:", image);
     console.log("PDF details:", pdfFile);
 
-    // Upload image to Cloudinary
-    const imageUrl = await uploadToCloudinary(image, "books/images");
-    console.log("Image uploaded to Cloudinary:", imageUrl);
+    // Upload image to Backblaze
+    const imageUrl = await uploadToBackblaze(image, "books/images");
+    console.log("Image uploaded to Backblaze:", imageUrl);
 
-    // Upload PDF to Cloudinary
-    const pdfUrl = await uploadToCloudinary(pdfFile, "books/pdfs");
-    console.log("PDF uploaded to Cloudinary:", pdfUrl);
+    // Upload PDF to Backblaze
+    const pdfUrl = await uploadToBackblaze(pdfFile, "books/pdfs");
+    console.log("PDF uploaded to Backblaze:", pdfUrl);
 
-    // Save book data to MongoDB with Cloudinary URLs
+    // Save book data to MongoDB with Backblaze URLs
     const newBook = new Book({
       title,
       author,
@@ -46,7 +46,7 @@ exports.addBook = async (req, res) => {
   }
 };
 
-// Get all ebooks (with Cloudinary image URLs)
+// Get all ebooks (with Backblaze image URLs)
 exports.getEbooks = async (req, res) => {
   try {
     const books = await Book.find({});
@@ -62,7 +62,7 @@ exports.getEbooks = async (req, res) => {
   }
 };
 
-// Fetch a book by its ID (Cloudinary URLs included)
+// Fetch a book by its ID (Backblaze URLs included)
 // Example of fetching book and ensuring pdf URL is available
 const getBookById = async (id) => {
   try {

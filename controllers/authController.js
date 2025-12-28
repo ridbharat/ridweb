@@ -1,4 +1,4 @@
-const User = require("../models/user");
+const User = require("../schema/models/users.generated");
 const bcrypt = require("bcryptjs");
 
 const cookieParser = require("cookie-parser");

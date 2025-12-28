@@ -1,6 +1,6 @@
 // config/passport.js
 const LocalStrategy = require('passport-local').Strategy;
-const User = require('../models/user'); // Adjust the path as needed
+const User = require('../schema/models/users.generated'); // Adjust the path as needed
 
 module.exports = function(passport) {
   passport.use(new LocalStrategy(
