@@ -1,12 +1,9 @@
 require('dotenv').config();
 const express = require("express");
-const bodyParser = require("body-parser");
 const path = require("path");
 const session = require("express-session");
 const mongoose = require('mongoose');
 const passport = require("passport");
-const dotenv = require("dotenv");
-const connectDB = require("./config/db");
 const cookieParser = require("cookie-parser");
 const helmet = require('helmet');
 const MongoStore = require('connect-mongo');
@@ -15,9 +12,6 @@ const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const fileUpload = require("express-fileupload");
-
-// Load environment variables
-dotenv.config();
 
 // Initialize express app
 const app = express();
@@ -149,17 +143,17 @@ app.use((req, res, next) => {
 app.locals.securityEvents = new Map();
 app.locals.pdfTokens = new Map();
 
-// ========== EBOOK ROUTES ==========
-app.use('/ebook', require('./routes/pdfRoutes'));
-app.use('/ebook', require('./routes/authebookRoutes'));
-
-// ========== WORKSHOP ROUTES (MOVE HERE) ==========
-const workshopRoutes = require('./routes/workshopRoutes');
-app.use('/api/workshop', workshopRoutes);
-
 // ========== MAIN APPLICATION ROUTES ==========
 const configureRoutes = () => {
-  // API Routes
+  // ========== EBOOK ROUTES ==========
+  app.use('/ebook', require('./routes/pdfRoutes'));
+  app.use('/ebook', require('./routes/authebookRoutes'));
+
+  // ========== WORKSHOP ROUTES ==========
+  const workshopRoutes = require('./routes/workshopRoutes');
+  app.use('/api/workshop', workshopRoutes);
+
+  // ========== API ROUTES ==========
   const organisationRoutes = require("./routes/organisation");
   const userRoutes = require("./routes/userRoutes");
   const authRoutes = require("./routes/authRoutes");
@@ -167,16 +161,17 @@ const configureRoutes = () => {
   const verifyRoutes = require("./routes/verify");
   const authenticateJWT = require("./middleware/authMiddleware");
 
-  // ========== CERTIFICATE ROUTES ==========
+  // Certificate routes
   const applicationRoutes = require("./routes/applicationRoutes");
   app.use("/api", applicationRoutes);
 
+  // User and auth routes
   app.use("/user", userRoutes);
   app.use("/auth", authRoutes);
   app.use("/admin", adminRoutes);
   app.use("/verify", verifyRoutes);
   app.use("/api/organisation", organisationRoutes);
-  app.use("/api/user", userRoutes);
+  // Removed duplicate /api/user route to avoid conflicts
 
   // ========== SECURE PDF ACCESS ==========
   app.use('/ebook/uploads/pdfs', (req, res, next) => {
@@ -191,12 +186,13 @@ const configureRoutes = () => {
   });
 
   // ========== RTS INTEGRATION ==========
-  app.use("/RTS/public", express.static(path.join(__dirname, "RTS", "public")));
-  app.use("/rts", express.static(path.join(__dirname, "RTS", "public")));
-  
-  app.get("/rts/main", (req, res) => {
-    res.sendFile(path.join(__dirname, "RTS", "public", "main.html"));
-  });
+  // Commented out - RTS folder doesn't exist
+  // app.use("/RTS/public", express.static(path.join(__dirname, "RTS", "public")));
+  // app.use("/rts", express.static(path.join(__dirname, "RTS", "public")));
+
+  // app.get("/rts/main", (req, res) => {
+  //   res.sendFile(path.join(__dirname, "RTS", "public", "main.html"));
+  // });
 
   // ========== VIEW ROUTES ==========
   const Organisation = require("./models/Organisation");
@@ -299,9 +295,9 @@ const configureRoutes = () => {
     res.sendFile(path.join(__dirname, "public/pages/auth/index.html"));
   });
 
-  app.get("/searchResult", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "searchResult.html"));
-  });
+  // app.get("/searchResult", (req, res) => {
+  //   res.sendFile(path.join(__dirname, "public", "searchResult.html"));
+  // }); // Commented out - file doesn't exist
 
   app.get("/serverpdf", (req, res) => {
     res.sendFile(path.join(__dirname, "public/pages/certificate/serverpdf.html"));
@@ -320,13 +316,13 @@ const configureRoutes = () => {
     res.sendFile(path.join(__dirname, "public/pages/ebook/ebook.html"));
   });
 
-  app.get("/get-pdf", (req, res) => {
-    const pdfPath = path.join(__dirname, "ebookdata", "azenglish.pdf");
-    const pdfStream = fs.createReadStream(pdfPath);
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader("Content-Disposition", "inline");
-    pdfStream.pipe(res);
-  });
+  // app.get("/get-pdf", (req, res) => {
+  //   const pdfPath = path.join(__dirname, "ebookdata", "azenglish.pdf");
+  //   const pdfStream = fs.createReadStream(pdfPath);
+  //   res.setHeader("Content-Type", "application/pdf");
+  //   res.setHeader("Content-Disposition", "inline");
+  //   pdfStream.pipe(res);
+  // }); // Commented out - ebookdata folder doesn't exist
 
   // ========== LOGOUT ROUTE ==========
   app.get("/logout", (req, res) => {
