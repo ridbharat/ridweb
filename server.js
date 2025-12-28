@@ -348,6 +348,11 @@ const configureRoutes = () => {
     res.json({ duration });
   });
 
+  // ========== REDIRECTS FOR OLD PATHS ==========
+  app.get("/contact/contact.html", (req, res) => res.redirect("/pages/contact/contact.html"));
+  app.get("/about/about.html", (req, res) => res.redirect("/pages/about/about.html"));
+  // Add more if needed
+
   // ========== CATCH-ALL 404 ==========
   app.use((req, res) => {
     res.status(404).sendFile(path.join(__dirname, "public/pages/errors/404.html"));
