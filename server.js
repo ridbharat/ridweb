@@ -250,17 +250,17 @@ const configureRoutes = () => {
     res.render("register-org");
   });
 
-  app.get("/teacher", authenticateJWT, roleMiddleware("teacher"), (req, res) => {
-    res.sendFile(path.join(__dirname, "public/pages/dashboard/teacher.html"));
-  });
+   app.get("/teacher", authenticateJWT, roleMiddleware("teacher"), (req, res) => {
+     res.render("pages/dashboard/teacher");
+   });
 
-  app.get("/student", authenticateJWT, roleMiddleware("student"), (req, res) => {
-    res.sendFile(path.join(__dirname, "public/pages/dashboard/student.html"));
-  });
+   app.get("/student", authenticateJWT, roleMiddleware("student"), (req, res) => {
+     res.render("pages/dashboard/student");
+   });
 
-  app.get("/admin", authenticateJWT, roleMiddleware("admin"), (req, res) => {
-    res.sendFile(path.join(__dirname, "public/pages/admin/admin.html"));
-  });
+   app.get("/admin", authenticateJWT, roleMiddleware("admin"), (req, res) => {
+     res.render("pages/admin/admin");
+   });
 
    app.get("/reset-password", (req, res) => {
      res.render("auth/reset-password");
@@ -349,10 +349,14 @@ const configureRoutes = () => {
     res.json({ duration });
   });
 
-  // ========== REDIRECTS FOR OLD PATHS ==========
-  app.get("/contact/contact.html", (req, res) => res.redirect("/pages/contact/contact.html"));
-  app.get("/about/about.html", (req, res) => res.redirect("/pages/about/about.html"));
-  // Add more if needed
+   // ========== ADDITIONAL PAGE ROUTES ==========
+   app.get("/contact", (req, res) => res.render("contact/contact"));
+   app.get("/about", (req, res) => res.render("about/about"));
+
+   // ========== REDIRECTS FOR OLD PATHS ==========
+   app.get("/contact/contact.html", (req, res) => res.redirect("/pages/contact/contact.html"));
+   app.get("/about/about.html", (req, res) => res.redirect("/pages/about/about.html"));
+   // Add more if needed
 
    // ========== CATCH-ALL 404 ==========
    app.use((req, res) => {

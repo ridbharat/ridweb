@@ -1,0 +1,3039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReadVault - Modern Digital Library</title>
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,300,400&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --pure-white: #ffffff;
+            --white-95: #f8fafc;
+            --white-90: #f1f5f9;
+            --white-80: #e2e8f0;
+            --white-60: #cbd5e1;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --text-light: #94a3b8;
+            --gradient-bg: linear-gradient(135deg, #f4f0f0 0%, #f0f4f8 100%);
+            --gradient-card: linear-gradient(135deg, #efe9e9 0%, #d9dee3 100%);
+            --gradient-header: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+            --gradient-accent: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-orange: #f59e0b;
+            --accent-purple: #8b5cf6;
+            --accent-pink: #ec4899;
+            --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.15);
+            --shadow-xl: 0 25px 80px rgba(0, 0, 0, 0.2);
+            --radius: 16px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* ✅ FIXED: Default desktop values */
+            --book-card-height: 300px;
+            --book-card-width: 220px;
+            --book-cover-height: 170px;
+            --book-content-height: 130px;
+            --book-content-padding: 0.75rem;
+            --book-title-font: 0.9rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Satoshi', sans-serif;
+            background: var(--gradient-bg);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .app {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ✅ FIXED: Header with mobile controls */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(40px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .logo img {
+            max-height: 50px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-header);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+            font-weight: 700;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .logo:hover .logo-icon {
+            transform: rotate(10deg) scale(1.1);
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #1e40af, #2563eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ✅ FIXED: Nav actions with mobile toggle */
+        .nav-actions {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* ✅ NEW: Mobile Library Toggle Button (Hidden on Desktop) */
+        .mobile-library-toggle {
+            display: none;
+        }
+
+        @media (max-width: 1024px) {
+            .mobile-library-toggle {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            
+            .mobile-library-toggle-btn {
+                background: var(--gradient-accent);
+                color: white;
+                border: none;
+                padding: 0.5rem 1rem;
+                border-radius: 25px;
+                font-weight: 600;
+                font-size: 0.85rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                cursor: pointer;
+                transition: var(--transition);
+                box-shadow: var(--shadow);
+                white-space: nowrap;
+            }
+            
+            .mobile-library-toggle-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: var(--shadow-lg);
+            }
+            
+            .mobile-library-toggle-btn i {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .mobile-library-toggle-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+            
+            .mobile-library-toggle-btn i {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* ✅ FIXED: Main content with books on top priority */
+        .main-content {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            width: 100%;
+            flex: 1;
+        }
+
+        /* ✅ FIXED: Mobile layout - Books first, sidebar later */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 0;
+                padding: 1rem;
+            }
+            
+            .left-sidebar {
+                order: 2;
+                margin-top: 2rem;
+            }
+            
+            .books-column {
+                order: 1;
+            }
+            
+            /* Hide the standalone toggle button */
+            .mobile-sidebar-toggle {
+                display: none !important;
+            }
+        }
+
+        .left-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .books-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        /* ✅ FIXED: Compact header for mobile */
+        .compact-header-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .compact-header-row {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            
+            .search-section {
+                order: 1;
+            }
+            
+            .filter-section {
+                order: 2;
+            }
+        }
+
+        .filter-section {
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+            margin-bottom: 0;
+        }
+
+        .filter-tabs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+            align-items: stretch;
+        }
+
+        .filter-tab {
+            background: var(--white-95);
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-radius: var(--radius);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 700;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .filter-tab-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            padding: 0.5rem;
+        }
+
+        .filter-icon {
+            font-size: 1rem;
+            margin-bottom: 0.125rem;
+            flex-shrink: 0;
+        }
+
+        .filter-text {
+            font-size: 0.75rem;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .filter-count {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 0.2rem 0.4rem;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            min-width: 22px;
+            line-height: 1;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .filter-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .filter-tab:hover::before {
+            left: 100%;
+        }
+
+        .filter-tab:hover {
+            background: var(--white-90);
+            transform: translateY(-2px);
+            border-color: rgba(59, 130, 246, 0.3);
+            color: var(--text-primary);
+        }
+
+        .filter-tab.active {
+            background: var(--gradient-header);
+            border-color: transparent;
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .filter-tab.active .filter-count {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .search-section {
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-lg);
+            padding: 0;
+            margin-bottom: 0;
+            min-width: 300px;
+        }
+
+        .search-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.875rem 1.5rem 0.875rem 2.5rem;
+            background: var(--white-95);
+            border: 2px solid rgba(0, 0, 0, 0.15);
+            border-radius: 50px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition);
+            height: 48px;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            background: var(--pure-white);
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            transform: scale(1.02);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1rem;
+            transition: var(--transition);
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .search-icon:hover {
+            color: #2563eb;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .search-input:focus + .search-icon {
+            color: #2563eb;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .books-section {
+            margin-bottom: 0;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .section-title i {
+            background: var(--gradient-header);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .results-info {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            background: var(--white-95);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        /* ✅ FIXED: Books grid with priority on mobile */
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.25rem;
+            align-items: start;
+        }
+
+        /* ✅ FIXED: Now using direct CSS instead of variables for better compatibility */
+        .book-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: var(--transition);
+            position: relative;
+            box-shadow: var(--shadow);
+            
+            /* ✅ DEFAULT DESKTOP SIZE */
+            width: 100%;
+            height: 300px;
+            min-height: 300px;
+            max-height: 300px;
+            
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .book-cover-container {
+            position: relative;
+            width: 100%;
+            height: 170px; /* ✅ DEFAULT */
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .book-content {
+            flex: 1;
+            height: 130px; /* ✅ DEFAULT */
+            padding: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .book-title {
+            font-size: 0.9rem; /* ✅ DEFAULT */
+            font-weight: 800;
+            color: #f7fafc;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 2.4em;
+            max-height: 2.6em;
+            flex-shrink: 0;
+            
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            word-break: break-word;
+            hyphens: auto;
+            padding: 0 0.25rem;
+        }
+
+        /* ✅ FIXED: RESPONSIVE SIZES - Using direct media queries instead of CSS variables */
+        
+        /* Large Desktop (1400px+) */
+        @media (min-width: 1400px) {
+            .books-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 1.5rem;
+            }
+            
+            .book-card {
+                height: 320px;
+                min-height: 320px;
+                max-height: 320px;
+            }
+            
+            .book-cover-container {
+                height: 190px;
+            }
+            
+            .book-content {
+                height: 130px;
+            }
+        }
+
+        /* Desktop (1200px - 1399px) */
+        @media (max-width: 1399px) and (min-width: 1200px) {
+            .books-grid {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                gap: 1.5rem;
+            }
+            
+            .book-card {
+                height: 300px;
+                min-height: 300px;
+                max-height: 300px;
+            }
+            
+            .book-cover-container {
+                height: 180px;
+            }
+            
+            .book-content {
+                height: 120px;
+            }
+        }
+
+        /* Laptop (1024px - 1199px) */
+        @media (max-width: 1199px) and (min-width: 1024px) {
+            .books-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 1.25rem;
+            }
+            
+            .book-card {
+                height: 280px;
+                min-height: 280px;
+                max-height: 280px;
+            }
+            
+            .book-cover-container {
+                height: 160px;
+            }
+            
+            .book-content {
+                height: 120px;
+            }
+        }
+
+        /* TABLET (768px - 1023px) */
+        @media (max-width: 1023px) and (min-width: 768px) {
+            .books-grid {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                gap: 1rem;
+            }
+            
+            .book-card {
+                height: 260px;
+                min-height: 260px;
+                max-height: 260px;
+            }
+            
+            .book-cover-container {
+                height: 150px;
+            }
+            
+            .book-content {
+                height: 110px;
+                padding: 0.625rem;
+            }
+            
+            .book-title {
+                font-size: 0.85rem;
+                min-height: 2.2em;
+                max-height: 2.4em;
+            }
+            
+            .book-author {
+                font-size: 0.7rem;
+                padding: 0.2rem 0;
+                gap: 0.375rem;
+            }
+            
+            .book-actions .btn {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.75rem;
+            }
+            
+            .book-badges {
+                top: 0.4rem;
+                left: 0.4rem;
+                right: 0.4rem;
+            }
+            
+            .category-badge {
+                padding: 0.2rem 0.4rem;
+                font-size: 0.55rem;
+            }
+            
+            .rating-badge {
+                padding: 0.2rem 0.4rem;
+                font-size: 0.6rem;
+            }
+        }
+
+        /* MOBILE (576px - 767px) */
+        @media (max-width: 767px) and (min-width: 576px) {
+            .books-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 0.875rem;
+            }
+            
+            .book-card {
+                height: 240px;
+                min-height: 240px;
+                max-height: 240px;
+            }
+            
+            .book-cover-container {
+                height: 140px;
+            }
+            
+            .book-content {
+                height: 100px;
+                padding: 0.625rem;
+            }
+            
+            .book-title {
+                font-size: 0.8rem;
+                min-height: 2.2em;
+                max-height: 2.4em;
+                margin-bottom: 0.4rem;
+            }
+            
+            .book-author {
+                font-size: 0.65rem;
+                margin-bottom: 0.5rem;
+                gap: 0.25rem;
+            }
+            
+            .book-actions .btn {
+                padding: 0.45rem 0.65rem;
+                font-size: 0.7rem;
+            }
+            
+            .book-badges {
+                top: 0.3rem;
+                left: 0.3rem;
+                right: 0.3rem;
+            }
+            
+            .category-badge {
+                padding: 0.15rem 0.3rem;
+                font-size: 0.5rem;
+            }
+            
+            .rating-badge {
+                padding: 0.15rem 0.3rem;
+                font-size: 0.55rem;
+            }
+        }
+
+        /* SMALL MOBILE (480px - 575px) */
+        @media (max-width: 575px) and (min-width: 480px) {
+            .books-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 0.75rem;
+            }
+            
+            .book-card {
+                height: 220px;
+                min-height: 220px;
+                max-height: 220px;
+            }
+            
+            .book-cover-container {
+                height: 130px;
+            }
+            
+            .book-content {
+                height: 90px;
+                padding: 0.5rem;
+            }
+            
+            .book-title {
+                font-size: 0.75rem;
+                min-height: 2em;
+                max-height: 2.2em;
+                margin-bottom: 0.3rem;
+            }
+            
+            .book-author {
+                font-size: 0.6rem;
+                gap: 0.2rem;
+                margin-bottom: 0.4rem;
+            }
+            
+            .book-actions .btn {
+                padding: 0.4rem 0.6rem;
+                font-size: 0.65rem;
+                margin-bottom: 0.3rem;
+            }
+        }
+
+        /* EXTRA SMALL MOBILE (360px - 479px) */
+        @media (max-width: 479px) and (min-width: 360px) {
+            .books-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 0.625rem;
+            }
+            
+            .book-card {
+                height: 200px;
+                min-height: 200px;
+                max-height: 200px;
+            }
+            
+            .book-cover-container {
+                height: 120px;
+            }
+            
+            .book-content {
+                height: 80px;
+                padding: 0.5rem;
+            }
+            
+            .book-title {
+                font-size: 0.7rem;
+                min-height: 1.8em;
+                max-height: 2em;
+                margin-bottom: 0.2rem;
+            }
+            
+            .book-author {
+                font-size: 0.55rem;
+                padding: 0.15rem 0;
+                margin-bottom: 0.3rem;
+            }
+            
+            .book-actions .btn {
+                padding: 0.35rem 0.5rem;
+                font-size: 0.6rem;
+                margin-bottom: 0.2rem;
+            }
+            
+            .book-cover-placeholder {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* TINY MOBILE (below 360px) */
+        @media (max-width: 359px) {
+            .books-grid {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+                gap: 0.5rem;
+            }
+            
+            .book-card {
+                height: 180px;
+                min-height: 180px;
+                max-height: 180px;
+            }
+            
+            .book-cover-container {
+                height: 110px;
+            }
+            
+            .book-content {
+                height: 70px;
+                padding: 0.4rem;
+            }
+            
+            .book-title {
+                font-size: 0.65rem;
+                min-height: 1.8em;
+                max-height: 2em;
+                margin-bottom: 0.2rem;
+            }
+            
+            .book-author {
+                font-size: 0.5rem;
+                gap: 0.15rem;
+                margin-bottom: 0.2rem;
+            }
+            
+            .book-actions .btn {
+                padding: 0.3rem 0.45rem;
+                font-size: 0.55rem;
+                margin-bottom: 0.2rem;
+            }
+            
+            .book-cover-placeholder {
+                font-size: 1.25rem;
+            }
+            
+            .book-badges {
+                top: 0.2rem;
+                left: 0.2rem;
+                right: 0.2rem;
+            }
+            
+            .category-badge {
+                padding: 0.1rem 0.2rem;
+                font-size: 0.45rem;
+            }
+            
+            .rating-badge {
+                padding: 0.1rem 0.2rem;
+                font-size: 0.5rem;
+            }
+        }
+
+        /* ✅ FIXED: Books grid for mobile in general */
+        @media (max-width: 1024px) {
+            .books-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .books-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 0.75rem;
+            }
+        }
+
+        .book-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-header);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .book-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .book-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            border-color: rgba(255, 255, 255, 0.25);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .book-cover {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            object-position: center center !important;
+            display: block;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .book-card:hover .book-cover {
+            transform: scale(1.08);
+        }
+
+        .book-cover-placeholder {
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-header);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .book-cover.error {
+            display: none !important;
+        }
+
+        .book-cover-placeholder.hidden {
+            display: none !important;
+        }
+
+        .book-cover-placeholder:not(.hidden) {
+            display: flex !important;
+        }
+
+        .book-badges {
+            position: absolute;
+            top: 0.5rem;
+            left: 0.5rem;
+            right: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            z-index: 2;
+        }
+
+        .category-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.6rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: var(--shadow-sm);
+            color: white;
+        }
+
+        .category-badge.technical {
+            background: #2563eb;
+        }
+
+        .category-badge.non-technical {
+            background: #10b981;
+        }
+
+        .category-badge.other {
+            background: #8b5cf6;
+        }
+
+        .rating-badge {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 0.25rem 0.5rem;
+            border-radius: 10px;
+            font-weight: 800;
+            color: #2563eb;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.65rem;
+            box-shadow: var(--shadow);
+        }
+
+        /* ✅ MOBILE पर Category Badge Hide करें (767px और नीचे) */
+        @media (max-width: 767px) {
+            .book-card .category-badge {
+                display: none !important;
+            }
+            
+            .book-badges {
+                justify-content: flex-end;
+            }
+        }
+
+        .book-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0.7) 0%,
+                transparent 40%,
+                transparent 60%,
+                rgba(0, 0, 0, 0.5) 100%
+            );
+            opacity: 0;
+            transition: var(--transition);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 1rem;
+            z-index: 1;
+        }
+
+        .book-card:hover .book-overlay {
+            opacity: 1;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 0.5rem;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .book-card:hover .quick-actions {
+            transform: translateY(0);
+        }
+
+        .action-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 0.8rem;
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .view-btn {
+            background: var(--gradient-accent);
+        }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .book-actions {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
+            flex-shrink: 0;
+            margin-bottom: 0.75rem;
+            order: 1;
+        }
+
+        .book-actions .btn {
+            padding: 0.6rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 0;
+        }
+
+        .book-author {
+            color: #d1d5db;
+            font-size: 0.75rem;
+            line-height: 1.3;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-style: italic;
+            padding: 0.25rem 0;
+            flex-shrink: 0;
+            order: 2;
+            text-align: center;
+        }
+
+        .book-author i {
+            color: #34d399;
+            font-size: 0.7rem;
+        }
+
+        .book-author span {
+            color: #fbbf24;
+            font-weight: 600;
+        }
+
+        .sidebar-section {
+            background: var(--pure-white);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .sidebar-title i {
+            background: var(--gradient-header);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .latest-books-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .latest-book-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--white-95);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .latest-book-item:hover {
+            background: var(--white-90);
+            transform: translateX(5px);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .latest-book-cover {
+            width: 50px;
+            height: 70px;
+            border-radius: 6px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .latest-book-cover-placeholder {
+            width: 50px;
+            height: 70px;
+            border-radius: 6px;
+            background: var(--gradient-header);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+
+        .latest-book-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .latest-book-title {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .latest-book-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .latest-book-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            color: var(--accent-orange);
+            font-weight: 600;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .stat-card {
+            background: var(--white-95);
+            padding: 1.25rem;
+            border-radius: var(--radius);
+            text-align: center;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .top-rated-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .top-rated-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--white-95);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .top-rated-item:hover {
+            background: var(--white-90);
+            transform: translateX(5px);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .top-rated-rank {
+            width: 30px;
+            height: 30px;
+            background: var(--gradient-header);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .top-rated-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .top-rated-title {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .top-rated-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.75rem;
+            color: var(--accent-orange);
+            font-weight: 600;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: var(--gradient-header);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: var(--white-95);
+            color: var(--text-primary);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: var(--white-90);
+            transform: translateY(-3px);
+        }
+
+        .btn-success {
+            background: var(--gradient-accent);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--accent-red);
+            color: white;
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .btn-sm {
+            padding: 0.75rem 1.25rem;
+            font-size: 0.85rem;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .pagination-btn {
+            padding: 1rem 1.5rem;
+            background: var(--white-95);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pagination-btn:hover:not(.disabled) {
+            background: var(--white-90);
+            transform: translateY(-2px);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .pagination-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: var(--white-95);
+        }
+
+        .pagination-info {
+            color: var(--text-secondary);
+            font-weight: 500;
+            background: var(--white-95);
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 5rem 2rem;
+            background: var(--pure-white);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: var(--radius-lg);
+            margin: 2rem 0;
+            grid-column: 1 / -1;
+            box-shadow: var(--shadow);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            background: var(--gradient-header);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .empty-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .empty-description {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            max-width: 500px;
+            margin: 0 auto 2rem;
+            line-height: 1.6;
+        }
+
+        .footer {
+            background: var(--white-95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 3rem 0 2rem;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+        }
+
+        .footer-link:hover {
+            color: var(--text-primary);
+            background: var(--white-90);
+        }
+
+        .footer-copyright {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* ✅ FIXED: Responsive Filter Tab Alignment */
+        @media (min-width: 1024px) {
+            .compact-header-row {
+                grid-template-columns: 1fr auto;
+                gap: 1.5rem;
+            }
+            
+            .filter-tab {
+                min-height: 80px;
+            }
+            
+            .filter-tab-content {
+                padding: 0.75rem;
+                gap: 0.375rem;
+            }
+            
+            .filter-icon {
+                font-size: 1.25rem;
+                margin-bottom: 0.25rem;
+            }
+            
+            .filter-text {
+                font-size: 0.85rem;
+            }
+            
+            .filter-count {
+                font-size: 0.8rem;
+                padding: 0.25rem 0.5rem;
+                min-width: 26px;
+            }
+            
+            .search-section {
+                min-width: 320px;
+            }
+        }
+
+        @media (max-width: 1023px) and (min-width: 769px) {
+            .compact-header-row {
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            
+            .filter-section {
+                padding: 0.75rem;
+            }
+            
+            .filter-tabs {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.5rem;
+            }
+            
+            .filter-tab {
+                min-height: 70px;
+            }
+            
+            .filter-tab-content {
+                padding: 0.625rem;
+                gap: 0.25rem;
+            }
+            
+            .filter-icon {
+                font-size: 1.1rem;
+                margin-bottom: 0.2rem;
+            }
+            
+            .filter-text {
+                font-size: 0.8rem;
+            }
+            
+            .filter-count {
+                font-size: 0.75rem;
+                padding: 0.2rem 0.4rem;
+                min-width: 24px;
+            }
+            
+            .search-section {
+                min-width: auto;
+            }
+            
+            .search-input {
+                height: 44px;
+                padding: 0.75rem 1.25rem 0.75rem 2.25rem;
+                font-size: 0.85rem;
+            }
+            
+            .search-icon {
+                left: 0.875rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .compact-header-row {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            
+            .filter-section {
+                padding: 0.625rem;
+                order: 2;
+            }
+            
+            .search-section {
+                order: 1;
+                min-width: 100%;
+            }
+            
+            .filter-tabs {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.375rem;
+            }
+            
+            .filter-tab {
+                min-height: 65px;
+            }
+            
+            .filter-tab-content {
+                padding: 0.5rem;
+                gap: 0.2rem;
+            }
+            
+            .filter-icon {
+                font-size: 1rem;
+                margin-bottom: 0.15rem;
+            }
+            
+            .filter-text {
+                font-size: 0.75rem;
+            }
+            
+            .filter-count {
+                font-size: 0.7rem;
+                padding: 0.15rem 0.3rem;
+                min-width: 22px;
+            }
+            
+            .search-input {
+                height: 42px;
+                padding: 0.625rem 1rem 0.625rem 2rem;
+                font-size: 0.8rem;
+            }
+            
+            .search-input::placeholder {
+                font-size: 0.75rem;
+            }
+            
+            .search-icon {
+                left: 0.75rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .compact-header-row {
+                gap: 0.5rem;
+            }
+            
+            .filter-section {
+                padding: 0.5rem;
+            }
+            
+            .filter-tabs {
+                gap: 0.25rem;
+            }
+            
+            .filter-tab {
+                min-height: 60px;
+            }
+            
+            .filter-tab-content {
+                padding: 0.375rem;
+                gap: 0.15rem;
+            }
+            
+            .filter-icon {
+                font-size: 0.9rem;
+                margin-bottom: 0.1rem;
+            }
+            
+            .filter-text {
+                font-size: 0.7rem;
+            }
+            
+            .filter-count {
+                font-size: 0.65rem;
+                padding: 0.1rem 0.25rem;
+                min-width: 20px;
+            }
+            
+            .search-input {
+                height: 40px;
+                padding: 0.5rem 0.875rem 0.5rem 1.75rem;
+                font-size: 0.75rem;
+            }
+            
+            .search-input::placeholder {
+                font-size: 0.7rem;
+            }
+            
+            .search-icon {
+                left: 0.625rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .filter-tab {
+                min-height: 55px;
+            }
+            
+            .filter-tab-content {
+                padding: 0.25rem;
+            }
+            
+            .filter-icon {
+                font-size: 0.85rem;
+            }
+            
+            .filter-text {
+                font-size: 0.65rem;
+            }
+            
+            .filter-count {
+                font-size: 0.6rem;
+                padding: 0.1rem 0.2rem;
+                min-width: 18px;
+            }
+            
+            .search-input {
+                height: 38px;
+                padding: 0.5rem 0.75rem 0.5rem 1.5rem;
+            }
+        }
+
+        /* ✅ FIXED: Mobile sidebar toggle in navbar */
+        .mobile-sidebar-toggle {
+            display: none;
+        }
+
+        @media (max-width: 1024px) {
+            .left-sidebar {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                width: 85%;
+                max-width: 400px;
+                height: 100vh;
+                background: var(--pure-white);
+                z-index: 2000;
+                overflow-y: auto;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                padding: 1.5rem;
+                box-shadow: var(--shadow-xl);
+                display: flex;
+                flex-direction: column;
+                gap: 2rem;
+                visibility: hidden;
+            }
+            
+            .left-sidebar.expanded {
+                left: 0;
+                visibility: visible;
+            }
+            
+            .left-sidebar.collapsed {
+                left: -100%;
+                visibility: hidden;
+            }
+            
+            .sidebar-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 1999;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+                cursor: pointer;
+            }
+            
+            .sidebar-overlay.active {
+                opacity: 1;
+                visibility: visible;
+            }
+            
+            .sidebar-close {
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+                background: var(--accent-red);
+                color: white;
+                border: none;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                font-size: 1.2rem;
+                z-index: 2001;
+                box-shadow: var(--shadow);
+                transition: var(--transition);
+            }
+            
+            .sidebar-close:hover {
+                transform: scale(1.1);
+                background: #dc2626;
+            }
+            
+            body.sidebar-open {
+                overflow: hidden;
+                position: fixed;
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .left-sidebar {
+                width: 90%;
+                padding: 1rem;
+            }
+        }
+
+        @media (min-width: 1025px) {
+            .left-sidebar {
+                position: static;
+                width: auto;
+                height: auto;
+                max-width: none;
+                padding: 0;
+                box-shadow: none;
+                background: transparent;
+                visibility: visible;
+            }
+            
+            .mobile-library-toggle {
+                display: none !important;
+            }
+            
+            .sidebar-overlay {
+                display: none !important;
+            }
+            
+            .sidebar-close {
+                display: none !important;
+            }
+        }
+
+        .search-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.875rem 1.5rem 0.875rem 2.5rem;
+            background: var(--white-95);
+            border: 2px solid rgba(0, 0, 0, 0.15);
+            border-radius: 50px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition);
+            height: 48px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            background: var(--pure-white);
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            transform: scale(1.02);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1rem;
+            transition: var(--transition);
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .search-icon:hover {
+            color: #2563eb;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .search-input:focus + .search-icon {
+            color: #2563eb;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .search-input[data-focused="true"] {
+            border-color: #2563eb;
+            background: var(--pure-white);
+        }
+
+        @keyframes spin {
+            0% { transform: translateY(-50%) rotate(0deg); }
+            100% { transform: translateY(-50%) rotate(360deg); }
+        }
+
+        .fa-spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .book-card {
+            animation: fadeInUp 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <header class="header">
+            <nav class="nav">
+                <a href="<%= typeof basePath !== 'undefined' ? basePath : '/ebook' %>" class="logo">
+                   <img src="../assets/final_logo.svg" alt="RID Bharat Logo" onerror="this.src='https://via.placeholder.com/260x70/083d5d/FFFFFF?text=RID+Bharat+Logo'" style="max-width: 100%; height: auto;">
+                </a>
+                <div class="nav-actions">
+                    <!-- ✅ NEW: Mobile Library Toggle in Navbar -->
+                    <div class="mobile-library-toggle">
+                        <button class="mobile-library-toggle-btn" id="mobileToggleSidebar">
+                            <i class="fas fa-info-circle"></i>
+                            Library Info
+                        </button>
+                    </div>
+                    
+                    <% if (typeof user !== 'undefined' && user) { %>
+                        <a href="<%= typeof basePath !== 'undefined' ? basePath + '/upload' : '/ebook/upload' %>" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Add New Book
+                        </a>
+                    <% } else { %>
+                        <a href="<%= typeof basePath !== 'undefined' ? basePath + '/login?redirect=' + encodeURIComponent(basePath + '/upload') : '/ebook/login?redirect=/ebook/upload' %>" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Add New Book
+                        </a>
+                    <% } %>
+                </div>
+            </nav>
+        </header>
+
+        <div class="main-content">
+            <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+            <div class="left-sidebar collapsed" id="leftSidebar">
+                <button class="sidebar-close" id="sidebarClose" aria-label="Close sidebar">
+                    <i class="fas fa-times"></i>
+                </button>
+                
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">
+                        <i class="fas fa-clock"></i>
+                        Latest Books
+                    </h3>
+                    <div class="latest-books-list">
+                        <% 
+                            const latestBooks = pdfs
+                                .sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate))
+                                .slice(0, 5);
+                        %>
+                        <% if (latestBooks.length === 0) { %>
+                            <div style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                                <i class="fas fa-book" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                                <p>No books yet</p>
+                            </div>
+                        <% } else { %>
+                            <% latestBooks.forEach((book, index) => { %>
+                                <a href="<%= typeof basePath !== 'undefined' ? basePath + '/secure-viewer/' + book._id : '/ebook/secure-viewer/' + book._id %>" class="latest-book-item">
+                                    <% if (book.coverImage) { %>
+                                        <img src="<%= typeof basePath !== 'undefined' ? basePath + '/uploads/covers/' + book.coverImage : '/ebook/uploads/covers/' + book.coverImage %>" 
+                                             alt="<%= book.title %>" 
+                                             class="latest-book-cover"
+                                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                             loading="lazy">
+                                        <div class="latest-book-cover-placeholder" style="display: none;">
+                                            <i class="fas fa-book"></i>
+                                        </div>
+                                    <% } else { %>
+                                        <div class="latest-book-cover-placeholder">
+                                            <i class="fas fa-book"></i>
+                                        </div>
+                                    <% } %>
+                                    <div class="latest-book-info">
+                                        <div class="latest-book-title"><%= book.title %></div>
+                                        <div class="latest-book-meta">
+                                            <span class="latest-book-rating">
+                                                <i class="fas fa-star"></i>
+                                                <%= book.rating ? book.rating.toFixed(1) : '4.0' %>
+                                            </span>
+                                            <span><%= new Date(book.uploadDate).toLocaleDateString() %></span>
+                                        </div>
+                                    </div>
+                                </a>
+                            <% }) %>
+                        <% } %>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">
+                        <i class="fas fa-chart-bar"></i>
+                        Library Stats
+                    </h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number"><%= stats.totalBooks || 0 %></div>
+                            <div class="stat-label">Total Books</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number"><%= stats.avgRating ? stats.avgRating.toFixed(1) : '0.0' %></div>
+                            <div class="stat-label">Avg Rating</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number"><%= stats.totalViews || 0 %></div>
+                            <div class="stat-label">Total Views</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number"><%= stats.totalDownloads || 0 %></div>
+                            <div class="stat-label">Downloads</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">
+                        <i class="fas fa-trophy"></i>
+                        Top Rated
+                    </h3>
+                    <div class="top-rated-list">
+                        <% 
+                            const topRatedBooks = pdfs
+                                .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+                                .slice(0, 5);
+                        %>
+                        <% if (topRatedBooks.length === 0) { %>
+                            <div style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                                <i class="fas fa-star" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                                <p>No ratings yet</p>
+                            </div>
+                        <% } else { %>
+                            <% topRatedBooks.forEach((book, index) => { %>
+                                <a href="<%= typeof basePath !== 'undefined' ? basePath + '/secure-viewer/' + book._id : '/ebook/secure-viewer/' + book._id %>" class="top-rated-item">
+                                    <div class="top-rated-rank"><%= index + 1 %></div>
+                                    <div class="top-rated-info">
+                                        <div class="top-rated-title"><%= book.title %></div>
+                                        <div class="top-rated-rating">
+                                            <i class="fas fa-star"></i>
+                                            <%= book.rating ? book.rating.toFixed(1) : '4.0' %>/5
+                                        </div>
+                                    </div>
+                                </a>
+                            <% }) %>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ✅ FIXED: Books column with direct sizes -->
+            <div class="books-column">
+                <div class="compact-header-row">
+                    <section class="filter-section">
+                        <div class="filter-tabs">
+                            <a href="<%= typeof basePath !== 'undefined' ? basePath + '/?filter=all&search=' + searchQuery + '&sort=' + sort : '/ebook/?filter=all&search=' + searchQuery + '&sort=' + sort %>" 
+                               class="filter-tab <%= currentFilter === 'all' ? 'active' : '' %>">
+                                <div class="filter-tab-content">
+                                    <i class="fas fa-th-large filter-icon"></i>
+                                    <span class="filter-text">All</span>
+                                    <span class="filter-count"><%= counts.all %></span>
+                                </div>
+                            </a>
+                            <a href="<%= typeof basePath !== 'undefined' ? basePath + '/?filter=technical&search=' + searchQuery + '&sort=' + sort : '/ebook/?filter=technical&search=' + searchQuery + '&sort=' + sort %>" 
+                               class="filter-tab <%= currentFilter === 'technical' ? 'active' : '' %>">
+                                <div class="filter-tab-content">
+                                    <i class="fas fa-laptop-code filter-icon"></i>
+                                    <span class="filter-text">Tech</span>
+                                    <span class="filter-count"><%= counts.technical %></span>
+                                </div>
+                            </a>
+                            <a href="<%= typeof basePath !== 'undefined' ? basePath + '/?filter=non-technical&search=' + searchQuery + '&sort=' + sort : '/ebook/?filter=non-technical&search=' + searchQuery + '&sort=' + sort %>" 
+                               class="filter-tab <%= currentFilter === 'non-technical' ? 'active' : '' %>">
+                                <div class="filter-tab-content">
+                                    <i class="fas fa-pen-fancy filter-icon"></i>
+                                    <span class="filter-text">non-Tech</span>
+                                    <span class="filter-count"><%= counts.nonTechnical %></span>
+                                </div>
+                            </a>
+                            <a href="<%= typeof basePath !== 'undefined' ? basePath + '/?filter=other&search=' + searchQuery + '&sort=' + sort : '/ebook/?filter=other&search=' + searchQuery + '&sort=' + sort %>" 
+                               class="filter-tab <%= currentFilter === 'other' ? 'active' : '' %>">
+                                <div class="filter-tab-content">
+                                    <i class="fas fa-book filter-icon"></i>
+                                    <span class="filter-text">Other</span>
+                                    <span class="filter-count"><%= counts.other %></span>
+                                </div>
+                            </a>
+                        </div>
+                    </section>
+
+                    <section class="search-section">
+                        <form method="GET" action="<%= typeof basePath !== 'undefined' ? basePath + '/' : '/ebook/' %>" class="search-container" id="searchForm">
+                            <input type="text" name="search" class="search-input" 
+                                   placeholder="Search books..."
+                                   value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>"
+                                   id="searchInput">
+                            <input type="hidden" name="filter" value="<%= currentFilter %>">
+                            <input type="hidden" name="sort" value="<%= sort %>">
+                            <div class="search-icon">
+                                <i class="fas fa-search"></i>
+                            </div>
+                        </form>
+                    </section>
+                </div>
+
+                <section class="books-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <% if (currentFilter === 'all') { %>
+                                <i class="fas fa-th-large"></i> All Books
+                            <% } else if (currentFilter === 'technical') { %>
+                                <i class="fas fa-laptop-code"></i> Technical Books
+                            <% } else if (currentFilter === 'non-technical') { %>
+                                <i class="fas fa-pen-fancy"></i> Non-Technical Books
+                            <% } else { %>
+                                <i class="fas fa-book"></i> Other Books
+                            <% } %>
+                            
+                            <% if (searchQuery) { %>
+                                <span style="color: var(--secondary-blue); font-weight: 400;">for "<%= searchQuery %>"</span>
+                            <% } %>
+                        </h2>
+                        <div class="results-info" id="resultsInfo">
+                            <i class="fas fa-book-open"></i>
+                            <%= pdfs.length %> books found
+                            <% if (totalPages > 1) { %>
+                                • Page <%= currentPage %> of <%= totalPages %>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <!-- ✅ BOOKS WITH FIXED SIZES -->
+                    <div class="books-grid" id="booksGrid">
+                        <% if (pdfs.length === 0) { %>
+                            <div class="empty-state">
+                                <div class="empty-icon">
+                                    <i class="fas fa-book-open"></i>
+                                </div>
+                                <h3 class="empty-title">No Books Found</h3>
+                                <p class="empty-description">
+                                    <% if (currentFilter !== 'all') { %>
+                                        We couldn't find any books in the 
+                                        <strong>
+                                            <%= currentFilter === 'technical' ? 'Technical' : 
+                                                currentFilter === 'non-technical' ? 'Non-Technical' : 'Other' %>
+                                        </strong> 
+                                        category.
+                                        <% if (searchQuery) { %>
+                                            matching "<strong><%= searchQuery %></strong>".
+                                        <% } %>
+                                    <% } else if (searchQuery) { %>
+                                        No results found for "<strong><%= searchQuery %></strong>".
+                                    <% } else { %>
+                                        No books available in your library yet.
+                                    <% } %>
+                                </p>
+                               
+                                <a href="<%= typeof basePath !== 'undefined' ? basePath + '/' : '/ebook/' %>" class="btn btn-secondary">
+                                    <i class="fas fa-book-open"></i>
+                                    Browse All Books
+                                </a>
+                            </div>
+                        <% } else { %>
+                            <% pdfs.forEach(pdf => { %>
+                                <div class="book-card">
+                                    <div class="book-cover-container">
+                                        <% if (pdf.coverImage) { %>
+                                            <img src="<%= typeof basePath !== 'undefined' ? basePath + '/uploads/covers/' + pdf.coverImage : '/ebook/uploads/covers/' + pdf.coverImage %>" 
+                                                 alt="<%= pdf.title %>" 
+                                                 class="book-cover"
+                                                 onerror="this.classList.add('error'); this.nextElementSibling.classList.remove('hidden');"
+                                                 loading="lazy"
+                                                 data-book-id="<%= pdf._id %>"
+                                                 style="object-fit: cover !important; object-position: center !important; width: 100% !important; height: 100% !important;">
+                                            <div class="book-cover-placeholder hidden">
+                                                <i class="fas fa-book"></i>
+                                            </div>
+                                        <% } else { %>
+                                            <div class="book-cover-placeholder">
+                                                <i class="fas fa-book"></i>
+                                            </div>
+                                        <% } %>
+                                        
+                                        <div class="book-badges">
+                                            <div class="category-badge <%= pdf.category %>">
+                                                <% if (pdf.category === 'technical') { %>
+                                                    <i class="fas fa-laptop-code"></i> TECH
+                                                <% } else if (pdf.category === 'non-technical') { %>
+                                                    <i class="fas fa-pen-fancy"></i> NON-TECH
+                                                <% } else { %>
+                                                    <i class="fas fa-book"></i> OTHER
+                                                <% } %>
+                                            </div>
+                                            <div class="rating-badge">
+                                                <i class="fas fa-star"></i>
+                                                <span><%= pdf.rating ? pdf.rating.toFixed(1) : '4.0' %></span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="book-overlay">
+                                            <div class="quick-actions">
+                                                <a href="<%= typeof basePath !== 'undefined' ? basePath + '/secure-viewer/' + pdf._id : '/ebook/secure-viewer/' + pdf._id %>" class="action-btn view-btn" title="Secure Read">
+                                                    <i class="fas fa-shield-alt"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="book-content">
+                                        <div class="book-actions">
+                                            <a href="<%= typeof basePath !== 'undefined' ? basePath + '/secure-viewer/' + pdf._id : '/ebook/secure-viewer/' + pdf._id %>" class="btn btn-success btn-sm btn-full">
+                                                <i class="fas fa-shield-alt"></i>
+                                                 Read
+                                            </a>
+                                        </div>
+                                        
+                                        <h3 class="book-title"><%= pdf.title %></h3>
+                                        
+                                        <div class="book-author">
+                                            <i class="fas fa-pen-nib"></i>
+                                            Written by <span>Er. Rajesh Prasad</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        <% } %>
+                    </div>
+
+                    <% if (totalPages > 1) { %>
+                    <div class="pagination">
+                        <% if (hasPrevPage) { %>
+                            <a href="<%= typeof basePath !== 'undefined' ? basePath + '/?page=' + (currentPage - 1) + '&filter=' + currentFilter + '&search=' + searchQuery + '&sort=' + sort : '/ebook/?page=' + (currentPage - 1) + '&filter=' + currentFilter + '&search=' + searchQuery + '&sort=' + sort %>" 
+                               class="pagination-btn">
+                                <i class="fas fa-chevron-left"></i>
+                                Previous
+                            </a>
+                        <% } else { %>
+                            <span class="pagination-btn disabled">
+                                <i class="fas fa-chevron-left"></i>
+                                Previous
+                            </span>
+                        <% } %>
+
+                        <span class="pagination-info">
+                            Page <%= currentPage %> of <%= totalPages %>
+                        </span>
+
+                        <% if (hasNextPage) { %>
+                            <a href="<%= typeof basePath !== 'undefined' ? basePath + '/?page=' + (currentPage + 1) + '&filter=' + currentFilter + '&search=' + searchQuery + '&sort=' + sort : '/ebook/?page=' + (currentPage + 1) + '&filter=' + currentFilter + '&search=' + searchQuery + '&sort=' + sort %>" 
+                               class="pagination-btn">
+                                Next
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        <% } else { %>
+                            <span class="pagination-btn disabled">
+                                Next
+                                <i class="fas fa-chevron-right"></i>
+                            </span>
+                        <% } %>
+                    </div>
+                    <% } %>
+                </section>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="<%= typeof basePath !== 'undefined' ? basePath + '/' : '/ebook/' %>" class="footer-link">Home</a>
+                    <a href="<%= typeof basePath !== 'undefined' ? basePath + '/upload' : '/ebook/upload' %>" class="footer-link">Upload</a>
+                    <a href="<%= typeof basePath !== 'undefined' ? basePath + '/api/stats' : '/ebook/api/stats' %>" class="footer-link">Statistics</a>
+                    <a href="<%= typeof basePath !== 'undefined' ? basePath + '/health' : '/ebook/health' %>" class="footer-link">Health</a>
+                </div>
+                <div class="footer-copyright">
+                    &copy; 2024 ReadVault. Made with ❤️ for book lovers.
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // ✅ FIXED: Force card sizes on page load
+        function forceCardSizes() {
+            const cards = document.querySelectorAll('.book-card');
+            const coverContainers = document.querySelectorAll('.book-cover-container');
+            const bookContents = document.querySelectorAll('.book-content');
+            const bookTitles = document.querySelectorAll('.book-title');
+            
+            // Remove any CSS variable dependencies
+            cards.forEach(card => {
+                card.style.setProperty('height', '', 'important');
+                card.style.setProperty('min-height', '', 'important');
+                card.style.setProperty('max-height', '', 'important');
+            });
+            
+            // Apply default desktop sizes
+            cards.forEach(card => {
+                card.style.height = '300px';
+                card.style.minHeight = '300px';
+                card.style.maxHeight = '300px';
+            });
+            
+            coverContainers.forEach(container => {
+                container.style.height = '170px';
+            });
+            
+            bookContents.forEach(content => {
+                content.style.height = '130px';
+                content.style.padding = '0.75rem';
+            });
+            
+            bookTitles.forEach(title => {
+                title.style.fontSize = '0.9rem';
+            });
+            
+            // Now apply responsive sizes based on screen width
+            updateCardSizes();
+        }
+        
+        function updateCardSizes() {
+            const width = window.innerWidth;
+            const cards = document.querySelectorAll('.book-card');
+            const coverContainers = document.querySelectorAll('.book-cover-container');
+            const bookContents = document.querySelectorAll('.book-content');
+            const bookTitles = document.querySelectorAll('.book-title');
+            
+            if (width >= 1400) {
+                // Large Desktop
+                cards.forEach(card => {
+                    card.style.height = '320px';
+                    card.style.minHeight = '320px';
+                    card.style.maxHeight = '320px';
+                });
+                coverContainers.forEach(container => {
+                    container.style.height = '190px';
+                });
+                bookContents.forEach(content => {
+                    content.style.height = '130px';
+                });
+            } else if (width >= 1200) {
+                // Desktop
+                cards.forEach(card => {
+                    card.style.height = '300px';
+                    card.style.minHeight = '300px';
+                    card.style.maxHeight = '300px';
+                });
+                coverContainers.forEach(container => {
+                    container.style.height = '180px';
+                });
+                bookContents.forEach(content => {
+                    content.style.height = '120px';
+                });
+            } else if (width >= 1024) {
+                // Laptop
+                cards.forEach(card => {
+                    card.style.height = '280px';
+                    card.style.minHeight = '280px';
+                    card.style.maxHeight = '280px';
+                });
+                coverContainers.forEach(container => {
+                    container.style.height = '160px';
+                });
+                bookContents.forEach(content => {
+                    content.style.height = '120px';
+                });
+            } else if (width >= 768) {
+                // Tablet
+                cards.forEach(card => {
+                    card.style.height = '260px';
+                    card.style.minHeight = '260px';
+                    card.style.maxHeight = '260px';
+                });
+                coverContainers.forEach(container => {
+                    container.style.height = '150px';
+                });
+                bookContents.forEach(content => {
+                    content.style.height = '110px';
+                    content.style.padding = '0.625rem';
+                });
+                bookTitles.forEach(title => {
+                    title.style.fontSize = '0.85rem';
+                });
+            } else if (width >= 576) {
+                // Mobile Large
+                cards.forEach(card => {
+                    card.style.height = '240px';
+                    card.style.minHeight = '240px';
+                    card.style.maxHeight = '240px';
+                });
+                coverContainers.forEach(container => {
+                    container.style.height = '140px';
+                });
+                bookContents.forEach(content => {
+                    content.style.height = '100px';
+                    content.style.padding = '0.625rem';
+                });
+                bookTitles.forEach(title => {
+                    title.style.fontSize = '0.8rem';
+                });
+            } else if (width >= 480) {
+                // Mobile Medium
+                cards.forEach(card => {
+                    card.style.height = '220px';
+                    card.style.minHeight = '220px';
+                    card.style.maxHeight = '220px';
+                });
+                coverContainers.forEach(container => {
+                    container.style.height = '130px';
+                });
+                bookContents.forEach(content => {
+                    content.style.height = '90px';
+                    content.style.padding = '0.5rem';
+                });
+                bookTitles.forEach(title => {
+                    title.style.fontSize = '0.75rem';
+                });
+            } else if (width >= 360) {
+                // Mobile Small
+                cards.forEach(card => {
+                    card.style.height = '200px';
+                    card.style.minHeight = '200px';
+                    card.style.maxHeight = '200px';
+                });
+                coverContainers.forEach(container => {
+                    container.style.height = '120px';
+                });
+                bookContents.forEach(content => {
+                    content.style.height = '80px';
+                    content.style.padding = '0.5rem';
+                });
+                bookTitles.forEach(title => {
+                    title.style.fontSize = '0.7rem';
+                });
+            } else {
+                // Mobile Tiny
+                cards.forEach(card => {
+                    card.style.height = '180px';
+                    card.style.minHeight = '180px';
+                    card.style.maxHeight = '180px';
+                });
+                coverContainers.forEach(container => {
+                    container.style.height = '110px';
+                });
+                bookContents.forEach(content => {
+                    content.style.height = '70px';
+                    content.style.padding = '0.4rem';
+                });
+                bookTitles.forEach(title => {
+                    title.style.fontSize = '0.65rem';
+                });
+            }
+        }
+
+        function handleImageError(img) {
+            img.classList.add('error');
+            const placeholder = img.nextElementSibling;
+            if (placeholder && placeholder.classList.contains('book-cover-placeholder')) {
+                placeholder.classList.remove('hidden');
+            }
+        }
+
+        function forceBookImageCover() {
+            const bookImages = document.querySelectorAll('.book-cover');
+            bookImages.forEach(img => {
+                img.style.objectFit = 'cover';
+                img.style.objectPosition = 'center center';
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.maxWidth = 'none';
+                img.style.maxHeight = 'none';
+                img.style.minWidth = '100%';
+                img.style.minHeight = '100%';
+                
+                img.addEventListener('error', function() {
+                    handleImageError(this);
+                });
+            });
+        }
+
+        function equalizeCardHeights() {
+            const cards = document.querySelectorAll('.book-card');
+            if (cards.length === 0) return;
+            
+            // Don't equalize, use fixed sizes
+            updateCardSizes();
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function initializeMobileSidebar() {
+            const mobileToggleBtn = document.getElementById('mobileToggleSidebar');
+            const leftSidebar = document.getElementById('leftSidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            const sidebarClose = document.getElementById('sidebarClose');
+            
+            if (!mobileToggleBtn || !leftSidebar || !sidebarOverlay || !sidebarClose) {
+                console.error('❌ Mobile sidebar elements not found!');
+                return;
+            }
+            
+            let sidebarExpanded = false;
+            let isAnimating = false;
+            
+            function openSidebar() {
+                if (isAnimating) return;
+                
+                isAnimating = true;
+                
+                document.body.classList.add('sidebar-open');
+                sidebarOverlay.classList.add('active');
+                
+                setTimeout(() => {
+                    leftSidebar.classList.remove('collapsed');
+                    leftSidebar.classList.add('expanded');
+                    mobileToggleBtn.innerHTML = '<i class="fas fa-times"></i> Close Info';
+                    sidebarExpanded = true;
+                    isAnimating = false;
+                }, 50);
+            }
+            
+            function closeSidebar() {
+                if (isAnimating) return;
+                
+                isAnimating = true;
+                
+                leftSidebar.classList.remove('expanded');
+                leftSidebar.classList.add('collapsed');
+                
+                setTimeout(() => {
+                    sidebarOverlay.classList.remove('active');
+                    document.body.classList.remove('sidebar-open');
+                    mobileToggleBtn.innerHTML = '<i class="fas fa-info-circle"></i> Library Info';
+                    sidebarExpanded = false;
+                    isAnimating = false;
+                }, 300);
+            }
+            
+            try {
+                mobileToggleBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (sidebarExpanded) {
+                        closeSidebar();
+                    } else {
+                        openSidebar();
+                    }
+                });
+                
+                sidebarClose.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    closeSidebar();
+                });
+                
+                sidebarOverlay.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    closeSidebar();
+                });
+                
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && sidebarExpanded) {
+                        closeSidebar();
+                    }
+                });
+                
+                leftSidebar.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+                
+            } catch (error) {
+                console.error('❌ Error setting up sidebar event listeners:', error);
+            }
+            
+            if (window.innerWidth <= 1024) {
+                leftSidebar.classList.add('collapsed');
+            }
+        }
+
+        let searchTimeout;
+        let currentSearchQuery = '';
+
+        const initializeSearch = () => {
+            const searchInput = document.getElementById('searchInput');
+            const searchForm = document.getElementById('searchForm');
+            const searchIcon = document.querySelector('.search-icon');
+            
+            if (!searchInput || !searchForm) return;
+
+            const currentFilter = '<%= currentFilter %>';
+            const currentSort = '<%= sort %>';
+            
+            clearTimeout(searchTimeout);
+            
+            if (searchIcon) {
+                searchIcon.style.cursor = 'pointer';
+                searchIcon.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    performImmediateSearch(searchInput.value, currentFilter, currentSort, searchInput);
+                });
+            }
+            
+            searchInput.addEventListener('input', function(e) {
+                clearTimeout(searchTimeout);
+                
+                if (searchIcon) {
+                    searchIcon.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                }
+                
+                const query = this.value.trim();
+                const cursorPosition = this.selectionStart;
+                
+                if (query === '') {
+                    performImmediateSearch('', currentFilter, currentSort, searchInput);
+                    return;
+                }
+                
+                searchTimeout = setTimeout(() => {
+                    performSearch(query, currentFilter, currentSort, searchInput, cursorPosition);
+                }, 400);
+            });
+
+            searchForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                performImmediateSearch(searchInput.value, currentFilter, currentSort, searchInput);
+            });
+            
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    performImmediateSearch(this.value, currentFilter, currentSort, searchInput);
+                }
+            });
+            
+            if (searchInput.value.trim() !== '') {
+                setTimeout(() => {
+                    searchInput.focus();
+                    searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
+                }, 500);
+            }
+        };
+
+        function performImmediateSearch(searchQuery, filter, sort, searchInput) {
+            clearTimeout(searchTimeout);
+            performSearch(searchQuery, filter, sort, searchInput, searchInput.value.length);
+        }
+
+        async function performSearch(searchQuery, filter, sort, searchInput, cursorPosition) {
+            try {
+                const searchIcon = document.querySelector('.search-icon');
+                
+                if (searchIcon) {
+                    searchIcon.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                }
+
+                updateFormHiddenFields(searchQuery, filter, sort);
+                
+                const params = new URLSearchParams({
+                    search: searchQuery,
+                    filter: filter,
+                    sort: sort,
+                    ajax: 'true'
+                });
+
+                const response = await fetch(`<%= typeof basePath !== 'undefined' ? basePath + '/api/search?' : '/ebook/api/search?' %>${params}`);
+                
+                if (!response.ok) throw new Error('Search failed');
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    updateBooksGrid(result.books);
+                    updateResultsInfo(result.total, result.currentPage, result.totalPages);
+                    updateURL(searchQuery, filter, sort);
+                    currentSearchQuery = searchQuery;
+                    
+                    if (searchInput) {
+                        setTimeout(() => {
+                            searchInput.focus();
+                            
+                            const newCursorPosition = Math.min(cursorPosition, searchInput.value.length);
+                            searchInput.setSelectionRange(newCursorPosition, newCursorPosition);
+                        }, 50);
+                    }
+                } else {
+                    throw new Error(result.error);
+                }
+                
+            } catch (error) {
+                console.error('Search error:', error);
+                fallbackSearch(searchQuery, filter, sort);
+            } finally {
+                const searchIcon = document.querySelector('.search-icon');
+                if (searchIcon) {
+                    searchIcon.innerHTML = '<i class="fas fa-search"></i>';
+                }
+            }
+        }
+
+        function updateFormHiddenFields(searchQuery, filter, sort) {
+            const form = document.getElementById('searchForm');
+            if (!form) return;
+            
+            let searchField = form.querySelector('input[name="search"]');
+            let filterField = form.querySelector('input[name="filter"]');
+            let sortField = form.querySelector('input[name="sort"]');
+            
+            if (!searchField) {
+                searchField = document.createElement('input');
+                searchField.type = 'hidden';
+                searchField.name = 'search';
+                form.appendChild(searchField);
+            }
+            
+            if (!filterField) {
+                filterField = document.createElement('input');
+                filterField.type = 'hidden';
+                filterField.name = 'filter';
+                form.appendChild(filterField);
+            }
+            
+            if (!sortField) {
+                sortField = document.createElement('input');
+                sortField.type = 'hidden';
+                sortField.name = 'sort';
+                form.appendChild(sortField);
+            }
+            
+            searchField.value = searchQuery;
+            filterField.value = filter;
+            sortField.value = sort;
+        }
+
+        function updateBooksGrid(books) {
+            const booksGrid = document.getElementById('booksGrid');
+            const resultsInfo = document.getElementById('resultsInfo');
+            
+            if (!booksGrid) return;
+
+            if (books.length === 0) {
+                booksGrid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <h3 class="empty-title">No Books Found</h3>
+                        <p class="empty-description">
+                            No results found for your search.
+                        </p>
+                        <a href="<%= typeof basePath !== 'undefined' ? basePath + '/' : '/ebook/' %>" class="btn btn-secondary">
+                            <i class="fas fa-book-open"></i>
+                            Browse All Books
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            const booksHTML = books.map(book => `
+                <div class="book-card">
+                    <div class="book-cover-container">
+                        ${book.coverImage ? `
+                            <img src="<%= typeof basePath !== 'undefined' ? basePath + '/uploads/covers/' : '/ebook/uploads/covers/' %>${book.coverImage}" 
+                                 alt="${book.title}" 
+                                 class="book-cover"
+                                 onerror="this.classList.add('error'); this.nextElementSibling.classList.remove('hidden');"
+                                 loading="lazy"
+                                 data-book-id="${book._id}"
+                                 style="object-fit: cover !important; object-position: center !important; width: 100% !important; height: 100% !important;">
+                            <div class="book-cover-placeholder hidden">
+                                <i class="fas fa-book"></i>
+                            </div>
+                        ` : `
+                            <div class="book-cover-placeholder">
+                                <i class="fas fa-book"></i>
+                            </div>
+                        `}
+                        
+                        <div class="book-badges">
+                            <div class="category-badge ${book.category}">
+                                ${book.category === 'technical' ? 
+                                    '<i class="fas fa-laptop-code"></i> TECH' : 
+                                    book.category === 'non-technical' ? 
+                                    '<i class="fas fa-pen-fancy"></i> NON-TECH' : 
+                                    '<i class="fas fa-book"></i> OTHER'}
+                            </div>
+                            <div class="rating-badge">
+                                <i class="fas fa-star"></i>
+                                <span>${book.rating ? book.rating.toFixed(1) : '4.0'}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="book-overlay">
+                            <div class="quick-actions">
+                                <a href="<%= typeof basePath !== 'undefined' ? basePath + '/secure-viewer/' : '/ebook/secure-viewer/' %>${book._id}" class="action-btn view-btn" title="Secure Read">
+                                    <i class="fas fa-shield-alt"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="book-content">
+                        <div class="book-actions">
+                            <a href="<%= typeof basePath !== 'undefined' ? basePath + '/secure-viewer/' : '/ebook/secure-viewer/' %>${book._id}" class="btn btn-success btn-sm btn-full">
+                                <i class="fas fa-shield-alt"></i>
+                                Read
+                            </a>
+                        </div>
+                        
+                        <h3 class="book-title">${book.title}</h3>
+                        
+                        <div class="book-author">
+                            <i class="fas fa-pen-nib"></i>
+                            Written by <span>Er. Rajesh Prasad</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            booksGrid.innerHTML = booksHTML;
+            
+            setTimeout(() => {
+                forceBookImageCover();
+                forceCardSizes(); // ✅ Use the fixed size function
+                initializeBookAnimations();
+            }, 100);
+        }
+
+        function updateResultsInfo(total, currentPage, totalPages) {
+            const resultsInfo = document.getElementById('resultsInfo');
+            if (resultsInfo) {
+                resultsInfo.innerHTML = `
+                    <i class="fas fa-book-open"></i>
+                    ${total} books found
+                    ${totalPages > 1 ? `• Page ${currentPage} of ${totalPages}` : ''}
+                `;
+            }
+        }
+
+        function updateURL(searchQuery, filter, sort) {
+            const url = new URL(window.location);
+            
+            if (searchQuery) {
+                url.searchParams.set('search', searchQuery);
+            } else {
+                url.searchParams.delete('search');
+            }
+            
+            url.searchParams.set('filter', filter);
+            url.searchParams.set('sort', sort);
+            
+            window.history.replaceState({}, '', url);
+        }
+
+        function fallbackSearch(searchQuery, filter, sort) {
+            const form = document.getElementById('searchForm');
+            updateFormHiddenFields(searchQuery, filter, sort);
+            form.submit();
+        }
+
+        function initializeBookAnimations() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }, index * 100);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.book-card').forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(40px)';
+                card.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                card.style.transitionDelay = `${index * 0.1}s`;
+                observer.observe(card);
+            });
+        }
+
+        function enhanceSearchExperience() {
+            const searchInput = document.getElementById('searchInput');
+            
+            if (!searchInput) return;
+            
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                    e.preventDefault();
+                    const searchInput = document.getElementById('searchInput');
+                    if (searchInput) {
+                        searchInput.focus();
+                        searchInput.select();
+                    }
+                }
+                
+                if (e.key === 'Escape' && document.activeElement === searchInput) {
+                    if (searchInput.value.trim() !== '') {
+                        searchInput.value = '';
+                        performImmediateSearch('', '<%= currentFilter %>', '<%= sort %>', searchInput);
+                    } else {
+                        searchInput.blur();
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMobileSidebar();
+            initializeSearch();
+            initializeBookAnimations();
+            enhanceSearchExperience();
+            
+            // ✅ CRITICAL: Force card sizes immediately
+            setTimeout(() => {
+                forceBookImageCover();
+                forceCardSizes(); // ✅ This will fix the inspect mode issue
+            }, 50);
+            
+            document.querySelectorAll('.book-cover').forEach(img => {
+                img.addEventListener('error', function() {
+                    handleImageError(this);
+                });
+            });
+        });
+
+        let resizeTimeout;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function() {
+                const leftSidebar = document.getElementById('leftSidebar');
+                const mobileToggleBtn = document.getElementById('mobileToggleSidebar');
+                const sidebarOverlay = document.getElementById('sidebarOverlay');
+                
+                if (window.innerWidth > 1024) {
+                    if (leftSidebar) {
+                        leftSidebar.classList.remove('collapsed', 'expanded');
+                        leftSidebar.style.position = 'static';
+                        leftSidebar.style.width = 'auto';
+                        leftSidebar.style.height = 'auto';
+                        leftSidebar.style.maxWidth = 'none';
+                        leftSidebar.style.padding = '0';
+                        leftSidebar.style.visibility = 'visible';
+                    }
+                    
+                    if (mobileToggleBtn) {
+                        mobileToggleBtn.style.display = 'none';
+                    }
+                    
+                    if (sidebarOverlay) {
+                        sidebarOverlay.classList.remove('active');
+                    }
+                    
+                    document.body.classList.remove('sidebar-open');
+                    
+                } else {
+                    if (mobileToggleBtn && mobileToggleBtn.parentElement) {
+                        mobileToggleBtn.parentElement.style.display = 'flex';
+                    }
+                    
+                    if (leftSidebar) {
+                        leftSidebar.style.position = 'fixed';
+                        leftSidebar.style.width = '85%';
+                        leftSidebar.style.maxWidth = '400px';
+                        leftSidebar.style.height = '100vh';
+                        leftSidebar.style.padding = '1.5rem';
+                        
+                        if (!leftSidebar.classList.contains('collapsed')) {
+                            leftSidebar.classList.add('collapsed');
+                            leftSidebar.classList.remove('expanded');
+                        }
+                    }
+                }
+                
+                // ✅ Update card sizes on resize
+                updateCardSizes();
+            }, 250);
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '/' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput) {
+                    searchInput.focus();
+                    setTimeout(() => {
+                        searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
+                    }, 10);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

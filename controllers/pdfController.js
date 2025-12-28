@@ -97,7 +97,7 @@ exports.dashboard = async (req, res) => {
         const totalPages = Math.ceil(total / limit);
         const currentPage = parseInt(page);
 
-        res.render('dashboard', {
+        res.render('ebook/dashboard', {
             pdfs,
             searchQuery: search || '',
             currentFilter: filter,
