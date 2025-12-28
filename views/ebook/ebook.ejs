@@ -517,24 +517,7 @@
 <body>
     <div class="E-Book-Parent">
         <!-- Sidebar -->
-        <div class="left-side-panel">
-<!--            <div class="logo">-->
-                <img src=/assets/background/RID-logo.png" alt="RID Logo">
-            </div>
-            
-            <h1 class="special">RID's E-Book Center</h1>
-            
-            <!-- Latest Reading Section -->
-            <div class="latest-reading-section">
-                <div class="latest-reading-header">
-                    <h1>Latest Reading</h1>
-                    <a href="#" class="view-all-btn" id="clearHistoryBtn">Clear All</a>
-                </div>
-                <div class="book-card-holder-sidebar" id="sidebarBooks">
-                    <!-- Latest reading books will be dynamically added here -->
-                </div>
-            </div>
-        </div>
+        <%- include('./sidebar') %>
 
         <!-- Main Book Cards Right Side -->
         <div class="right-side-main">

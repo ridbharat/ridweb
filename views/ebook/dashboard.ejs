@@ -1306,6 +1306,112 @@
             font-weight: 600;
         }
 
+        /* ✅ NEW: Reading Quote Styles */
+        .reading-quote {
+            text-align: center;
+            padding: 1rem;
+            background: var(--white-95);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .reading-quote blockquote {
+            position: relative;
+            margin: 0 0 0.5rem 0;
+            padding: 0.5rem 1rem;
+        }
+
+        .reading-quote blockquote::before {
+            content: '"';
+            font-size: 2rem;
+            color: var(--accent-green);
+            position: absolute;
+            left: -0.5rem;
+            top: -0.2rem;
+            font-family: serif;
+        }
+
+        .reading-quote blockquote::after {
+            content: '"';
+            font-size: 2rem;
+            color: var(--accent-green);
+            position: absolute;
+            right: -0.5rem;
+            bottom: -0.8rem;
+            font-family: serif;
+        }
+
+        /* ✅ NEW: Quick Actions Styles */
+        .quick-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow) !important;
+            text-decoration: none;
+            color: white;
+        }
+
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        /* ✅ NEW: Reading Tips Styles */
+        .reading-tips {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .tip-item:hover {
+            background: var(--white-90) !important;
+            transform: translateX(2px);
+            transition: var(--transition);
+        }
+
+        /* ✅ NEW: Category Breakdown Styles */
+        .category-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .category-item {
+            padding: 0.75rem;
+            background: var(--white-95);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+        }
+
+        .category-item:hover {
+            background: var(--white-90);
+            transform: translateX(3px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--white-90);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 0.25rem;
+        }
+
+        .progress-bar div {
+            height: 100%;
+            background: linear-gradient(90deg, #2563eb, #3b82f6);
+            border-radius: 3px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
         .btn {
             display: inline-flex;
             align-items: center;
@@ -2047,38 +2153,224 @@
                     </div>
                 </div>
 
-                <div class="sidebar-section">
-                    <h3 class="sidebar-title">
-                        <i class="fas fa-trophy"></i>
-                        Top Rated
-                    </h3>
-                    <div class="top-rated-list">
-                        <% 
-                            const topRatedBooks = pdfs
-                                .sort((a, b) => (b.rating || 0) - (a.rating || 0))
-                                .slice(0, 5);
-                        %>
-                        <% if (topRatedBooks.length === 0) { %>
-                            <div style="text-align: center; color: var(--text-muted); padding: 2rem;">
-                                <i class="fas fa-star" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
-                                <p>No ratings yet</p>
-                            </div>
-                        <% } else { %>
-                            <% topRatedBooks.forEach((book, index) => { %>
-                                <a href="<%= typeof basePath !== 'undefined' ? basePath + '/secure-viewer/' + book._id : '/ebook/secure-viewer/' + book._id %>" class="top-rated-item">
-                                    <div class="top-rated-rank"><%= index + 1 %></div>
-                                    <div class="top-rated-info">
-                                        <div class="top-rated-title"><%= book.title %></div>
-                                        <div class="top-rated-rating">
-                                            <i class="fas fa-star"></i>
-                                            <%= book.rating ? book.rating.toFixed(1) : '4.0' %>/5
-                                        </div>
-                                    </div>
-                                </a>
-                            <% }) %>
-                        <% } %>
-                    </div>
-                </div>
+                 <div class="sidebar-section">
+                     <h3 class="sidebar-title">
+                         <i class="fas fa-trophy"></i>
+                         Top Rated
+                     </h3>
+                     <div class="top-rated-list">
+                         <%
+                             const topRatedBooks = pdfs
+                                 .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+                                 .slice(0, 5);
+                         %>
+                         <% if (topRatedBooks.length === 0) { %>
+                             <div style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                                 <i class="fas fa-star" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                                 <p>No ratings yet</p>
+                             </div>
+                         <% } else { %>
+                             <% topRatedBooks.forEach((book, index) => { %>
+                                 <a href="<%= typeof basePath !== 'undefined' ? basePath + '/secure-viewer/' + book._id : '/ebook/secure-viewer/' + book._id %>" class="top-rated-item">
+                                     <div class="top-rated-rank"><%= index + 1 %></div>
+                                     <div class="top-rated-info">
+                                         <div class="top-rated-title"><%= book.title %></div>
+                                         <div class="top-rated-rating">
+                                             <i class="fas fa-star"></i>
+                                             <%= book.rating ? book.rating.toFixed(1) : '4.0' %>/5
+                                         </div>
+                                     </div>
+                                 </a>
+                             <% }) %>
+                         <% } %>
+                     </div>
+                 </div>
+
+                 <!-- NEW: Reading Motivation Section -->
+                 <div class="sidebar-section">
+                     <h3 class="sidebar-title">
+                         <i class="fas fa-lightbulb"></i>
+                         Reading Wisdom
+                     </h3>
+                     <%
+                         const readingQuotes = [
+                             {
+                                 quote: "The more that you read, the more things you will know. The more that you learn, the more places you'll go.",
+                                 author: "Dr. Seuss"
+                             },
+                             {
+                                 quote: "A reader lives a thousand lives before he dies. The man who never reads lives only one.",
+                                 author: "George R.R. Martin"
+                             },
+                             {
+                                 quote: "Reading is a discount ticket to everywhere.",
+                                 author: "Mary Schmich"
+                             },
+                             {
+                                 quote: "Books are a uniquely portable magic.",
+                                 author: "Stephen King"
+                             },
+                             {
+                                 quote: "Reading is dreaming with open eyes.",
+                                 author: "Unknown"
+                             },
+                             {
+                                 quote: "The reading of all good books is like conversation with the finest men of past centuries.",
+                                 author: "René Descartes"
+                             }
+                         ];
+                         const randomQuote = readingQuotes[Math.floor(Math.random() * readingQuotes.length)];
+                     %>
+                     <div class="reading-quote">
+                         <blockquote style="font-style: italic; color: var(--text-secondary); margin: 0; font-size: 0.9rem; line-height: 1.4;">
+                             "<%= randomQuote.quote %>"
+                         </blockquote>
+                         <cite style="display: block; margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-muted); text-align: right;">
+                             — <%= randomQuote.author %>
+                         </cite>
+                     </div>
+                 </div>
+
+                 <!-- NEW: Category Distribution -->
+                 <div class="sidebar-section">
+                     <h3 class="sidebar-title">
+                         <i class="fas fa-chart-pie"></i>
+                         Categories
+                     </h3>
+                     <div class="category-breakdown">
+                         <% if (counts.technical > 0 || counts.nonTechnical > 0 || counts.other > 0) { %>
+                             <% const categories = [
+                                 { name: 'Technical', count: counts.technical, icon: 'fa-laptop-code', color: '#2563eb' },
+                                 { name: 'Non-Technical', count: counts.nonTechnical, icon: 'fa-pen-fancy', color: '#10b981' },
+                                 { name: 'Other', count: counts.other, icon: 'fa-book', color: '#8b5cf6' }
+                             ].filter(cat => cat.count > 0); %>
+
+                             <% categories.forEach(category => { %>
+                                 <% const percentage = (category.count / counts.all * 100).toFixed(1); %>
+                                 <div class="category-item" style="margin-bottom: 1rem;">
+                                     <div class="category-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                         <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                             <i class="fas <%= category.icon %>" style="color: <%= category.color %>; font-size: 0.9rem;"></i>
+                                             <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);"><%= category.name %></span>
+                                         </div>
+                                         <span style="font-size: 0.8rem; color: var(--text-muted);"><%= category.count %></span>
+                                     </div>
+                                     <div class="progress-bar" style="width: 100%; height: 6px; background: var(--white-90); border-radius: 3px; overflow: hidden;">
+                                         <div style="width: <%= percentage %>%; height: 100%; background: <%= category.color %>; border-radius: 3px; transition: width 0.3s ease;"></div>
+                                     </div>
+                                     <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.25rem;"><%= percentage %>%</div>
+                                 </div>
+                             <% }); %>
+                         <% } else { %>
+                             <div style="text-align: center; color: var(--text-muted); padding: 1.5rem;">
+                                 <i class="fas fa-chart-pie" style="font-size: 1.5rem; margin-bottom: 0.5rem; opacity: 0.5;"></i>
+                                 <p style="font-size: 0.8rem;">No categories yet</p>
+                             </div>
+                         <% } %>
+                     </div>
+                 </div>
+
+                 <!-- NEW: Quick Actions Panel -->
+                 <div class="sidebar-section">
+                     <h3 class="sidebar-title">
+                         <i class="fas fa-bolt"></i>
+                         Quick Actions
+                     </h3>
+                     <div class="quick-actions-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                         <a href="<%= typeof basePath !== 'undefined' ? basePath + '/upload' : '/ebook/upload' %>"
+                            class="quick-action-btn"
+                            style="display: flex; flex-direction: column; align-items: center; padding: 1rem; background: var(--gradient-accent); color: white; text-decoration: none; border-radius: var(--radius); transition: var(--transition); box-shadow: var(--shadow-sm);">
+                             <i class="fas fa-plus-circle" style="font-size: 1.2rem; margin-bottom: 0.5rem;"></i>
+                             <span style="font-size: 0.75rem; font-weight: 600; text-align: center;">Add Book</span>
+                         </a>
+
+                         <a href="<%= typeof basePath !== 'undefined' ? basePath + '/?sort=views' : '/ebook/?sort=views' %>"
+                            class="quick-action-btn"
+                            style="display: flex; flex-direction: column; align-items: center; padding: 1rem; background: var(--gradient-warning); color: white; text-decoration: none; border-radius: var(--radius); transition: var(--transition); box-shadow: var(--shadow-sm);">
+                             <i class="fas fa-fire" style="font-size: 1.2rem; margin-bottom: 0.5rem;"></i>
+                             <span style="font-size: 0.75rem; font-weight: 600; text-align: center;">Trending</span>
+                         </a>
+
+                         <a href="<%= typeof basePath !== 'undefined' ? basePath + '/?sort=rating' : '/ebook/?sort=rating' %>"
+                            class="quick-action-btn"
+                            style="display: flex; flex-direction: column; align-items: center; padding: 1rem; background: var(--gradient-header); color: white; text-decoration: none; border-radius: var(--radius); transition: var(--transition); box-shadow: var(--shadow-sm);">
+                             <i class="fas fa-star" style="font-size: 1.2rem; margin-bottom: 0.5rem;"></i>
+                             <span style="font-size: 0.75rem; font-weight: 600; text-align: center;">Top Rated</span>
+                         </a>
+
+                         <a href="<%= typeof basePath !== 'undefined' ? basePath + '/?filter=technical' : '/ebook/?filter=technical' %>"
+                            class="quick-action-btn"
+                            style="display: flex; flex-direction: column; align-items: center; padding: 1rem; background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%); color: white; text-decoration: none; border-radius: var(--radius); transition: var(--transition); box-shadow: var(--shadow-sm);">
+                             <i class="fas fa-code" style="font-size: 1.2rem; margin-bottom: 0.5rem;"></i>
+                             <span style="font-size: 0.75rem; font-weight: 600; text-align: center;">Tech Books</span>
+                         </a>
+                     </div>
+                 </div>
+
+                 <!-- NEW: Reading Tips -->
+                 <div class="sidebar-section">
+                     <h3 class="sidebar-title">
+                         <i class="fas fa-graduation-cap"></i>
+                         Reading Tips
+                     </h3>
+                     <%
+                         const readingTips = [
+                             {
+                                 title: "Set Reading Goals",
+                                 tip: "Aim to read 30 minutes daily. Small consistent efforts lead to big results.",
+                                 icon: "fa-lightbulb",
+                                 color: "var(--accent-green)"
+                             },
+                             {
+                                 title: "Take Notes",
+                                 tip: "Write down key insights and quotes. Review them later for deeper understanding.",
+                                 icon: "fa-bookmark",
+                                 color: "var(--accent-orange)"
+                             },
+                             {
+                                 title: "Active Reading",
+                                 tip: "Ask questions while reading. What does this mean? How does it connect to what I already know?",
+                                 icon: "fa-brain",
+                                 color: "var(--accent-purple)"
+                             },
+                             {
+                                 title: "Reading Environment",
+                                 tip: "Find a quiet, comfortable space. Good lighting and minimal distractions improve focus.",
+                                 icon: "fa-moon",
+                                 color: "#6366f1"
+                             },
+                             {
+                                 title: "Variety Matters",
+                                 tip: "Mix different genres and topics. This keeps reading interesting and broadens your perspective.",
+                                 icon: "fa-palette",
+                                 color: "#ec4899"
+                             },
+                             {
+                                 title: "Discussion",
+                                 tip: "Share what you read with others. Teaching reinforces learning and sparks new insights.",
+                                 icon: "fa-comments",
+                                 color: "#f59e0b"
+                             }
+                         ];
+
+                         // Show 2 random tips
+                         const shuffledTips = readingTips.sort(() => 0.5 - Math.random());
+                         const selectedTips = shuffledTips.slice(0, 2);
+                     %>
+                     <div class="reading-tips">
+                         <% selectedTips.forEach(tip => { %>
+                             <div class="tip-item" style="padding: 1rem; background: var(--white-95); border-radius: var(--radius); margin-bottom: 0.75rem; border-left: 4px solid <%= tip.color %>; transition: var(--transition); cursor: pointer;">
+                                 <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+                                     <i class="fas <%= tip.icon %>" style="color: <%= tip.color %>; font-size: 1rem; margin-top: 0.1rem; flex-shrink: 0;"></i>
+                                     <div>
+                                         <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;"><%= tip.title %></h4>
+                                         <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0; line-height: 1.3;"><%= tip.tip %></p>
+                                     </div>
+                                 </div>
+                             </div>
+                         <% }); %>
+                     </div>
+                 </div>
             </div>
 
             <!-- ✅ FIXED: Books column with direct sizes -->

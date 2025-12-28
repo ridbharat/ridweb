@@ -3,6 +3,7 @@ const fs = require('fs').promises;
 const path = require('path');
 const crypto = require('crypto');
 const { getEbookUrl } = require('../utils/backblazeEbook');
+const { statsCache, bookCache, CACHE_KEYS } = require('../utils/cache');
 
 // ✅ Regular fs module import for createReadStream
 const fsRegular = require('fs');
@@ -83,24 +84,29 @@ exports.dashboard = async (req, res) => {
             PDF.distinct('category')
         ]);
 
-        // Compute stats with timeout handling
-        let stats = [];
-        try {
-            stats = await PDF.aggregate([
-                {
-                    $group: {
-                        _id: null,
-                        totalBooks: { $sum: 1 },
-                        avgRating: { $avg: '$rating' },
-                        totalViews: { $sum: '$viewCount' },
-                        totalDownloads: { $sum: '$downloadCount' },
-                        totalSize: { $sum: '$fileSize' }
+        // Compute stats with caching
+        let stats = statsCache.get(CACHE_KEYS.PDF_STATS_TOTAL);
+        if (!stats) {
+            try {
+                const rawStats = await PDF.aggregate([
+                    {
+                        $group: {
+                            _id: null,
+                            totalBooks: { $sum: 1 },
+                            avgRating: { $avg: '$rating' },
+                            totalViews: { $sum: '$viewCount' },
+                            totalDownloads: { $sum: '$downloadCount' },
+                            totalSize: { $sum: '$fileSize' }
+                        }
                     }
-                }
-            ]).maxTimeMS(5000); // 5 second timeout
-        } catch (statsError) {
-            console.warn('Stats calculation timed out, using defaults:', statsError.message);
-            stats = [];
+                ]).maxTimeMS(5000); // 5 second timeout
+                stats = rawStats;
+                // Cache for 5 minutes
+                statsCache.set(CACHE_KEYS.PDF_STATS_TOTAL, stats, 5 * 60 * 1000);
+            } catch (statsError) {
+                console.warn('Stats calculation timed out, using defaults:', statsError.message);
+                stats = [];
+            }
         }
 
         const totalPages = Math.ceil(total / limit);
@@ -116,12 +122,31 @@ exports.dashboard = async (req, res) => {
             hasNextPage: currentPage < totalPages,
             hasPrevPage: currentPage > 1,
             categories,
-            counts: {
-                all: await PDF.countDocuments(),
-                technical: await PDF.countDocuments({ category: 'technical' }),
-                nonTechnical: await PDF.countDocuments({ category: 'non-technical' }),
-                other: await PDF.countDocuments({ category: 'other' })
-            },
+            // Optimized: Single aggregate query for all category counts (with caching)
+            counts: (() => {
+                const cachedCounts = bookCache.get(CACHE_KEYS.BOOK_CATEGORIES);
+                if (cachedCounts) return cachedCounts;
+
+                return PDF.aggregate([
+                    {
+                        $group: {
+                            _id: '$category',
+                            count: { $sum: 1 }
+                        }
+                    }
+                ]).then(results => {
+                    const counts = { all: 0, technical: 0, nonTechnical: 0, other: 0 };
+                    results.forEach(result => {
+                        if (result._id === 'technical') counts.technical = result.count;
+                        else if (result._id === 'non-technical') counts.nonTechnical = result.count;
+                        else if (result._id === 'other') counts.other = result.count;
+                        counts.all += result.count;
+                    });
+                    // Cache for 10 minutes
+                    bookCache.set(CACHE_KEYS.BOOK_CATEGORIES, counts, 10 * 60 * 1000);
+                    return counts;
+                });
+            })(),
             stats: stats[0] || { 
                 totalBooks: 0, 
                 avgRating: 0, 
@@ -237,7 +262,12 @@ exports.uploadPDF = async (req, res) => {
         });
 
         await newPDF.save();
-        
+
+        // Clear relevant caches after book creation
+        statsCache.delete(CACHE_KEYS.PDF_STATS_TOTAL);
+        statsCache.delete(CACHE_KEYS.PDF_STATS_BY_CATEGORY);
+        bookCache.delete(CACHE_KEYS.BOOK_CATEGORIES);
+
         // ✅ Verify file was actually saved to disk
         const savedPdfPath = path.join(process.cwd(), 'public/uploads/pdfs', pdfFile.filename);
         try {
@@ -629,6 +659,12 @@ exports.editPDF = async (req, res) => {
         }
 
         await pdf.save();
+
+        // Clear relevant caches after book update
+        statsCache.delete(CACHE_KEYS.PDF_STATS_TOTAL);
+        statsCache.delete(CACHE_KEYS.PDF_STATS_BY_CATEGORY);
+        bookCache.delete(CACHE_KEYS.BOOK_CATEGORIES);
+
         res.redirect('/ebook/upload?success=Book updated successfully');
     } catch (error) {
         console.error('Edit PDF Error:', error);
@@ -664,6 +700,12 @@ exports.deletePDF = async (req, res) => {
         }
 
         await PDF.findByIdAndDelete(req.params.id);
+
+        // Clear relevant caches after book deletion
+        statsCache.delete(CACHE_KEYS.PDF_STATS_TOTAL);
+        statsCache.delete(CACHE_KEYS.PDF_STATS_BY_CATEGORY);
+        bookCache.delete(CACHE_KEYS.BOOK_CATEGORIES);
+
         res.redirect('/ebook/upload?success=Book deleted successfully');
     } catch (error) {
         console.error('Delete PDF Error:', error);
@@ -675,48 +717,55 @@ exports.deletePDF = async (req, res) => {
     }
 };
 
-// Get book statistics (API)
+// Get book statistics (API) with caching
 exports.getStats = async (req, res) => {
     try {
-        const stats = await PDF.aggregate([
-            {
-                $group: {
-                    _id: null,
-                    totalBooks: { $sum: 1 },
-                    totalSize: { $sum: '$fileSize' },
-                    avgRating: { $avg: '$rating' },
-                    totalViews: { $sum: '$viewCount' },
-                    totalDownloads: { $sum: '$downloadCount' },
-                    categories: { 
-                        $push: {
-                            category: '$category',
-                            count: 1
+        // Check cache first
+        let stats = statsCache.get(CACHE_KEYS.PDF_STATS_BY_CATEGORY);
+        if (!stats) {
+            stats = await PDF.aggregate([
+                {
+                    $group: {
+                        _id: null,
+                        totalBooks: { $sum: 1 },
+                        totalSize: { $sum: '$fileSize' },
+                        avgRating: { $avg: '$rating' },
+                        totalViews: { $sum: '$viewCount' },
+                        totalDownloads: { $sum: '$downloadCount' },
+                        categories: {
+                            $push: {
+                                category: '$category',
+                                count: 1
+                            }
                         }
                     }
-                }
-            },
-            {
-                $project: {
-                    totalBooks: 1,
-                    totalSize: 1,
-                    avgRating: { $round: ['$avgRating', 2] },
-                    totalViews: 1,
-                    totalDownloads: 1,
-                    byCategory: {
-                        $arrayToObject: {
-                            $map: {
-                                input: '$categories',
-                                as: 'cat',
-                                in: {
-                                    k: '$$cat.category',
-                                    v: '$$cat.count'
+                },
+                {
+                    $project: {
+                        totalBooks: 1,
+                        totalSize: 1,
+                        avgRating: { $round: ['$avgRating', 2] },
+                        totalViews: 1,
+                        totalDownloads: 1,
+                        byCategory: {
+                            $arrayToObject: {
+                                $map: {
+                                    input: '$categories',
+                                    as: 'cat',
+                                    in: {
+                                        k: '$$cat.category',
+                                        v: '$$cat.count'
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
-        ]);
+            ]);
+
+            // Cache the result for 5 minutes
+            statsCache.set(CACHE_KEYS.PDF_STATS_BY_CATEGORY, stats, 5 * 60 * 1000);
+        }
 
         res.json(stats[0] || {
             totalBooks: 0,
@@ -728,9 +777,9 @@ exports.getStats = async (req, res) => {
         });
     } catch (error) {
         console.error('Stats Error:', error);
-        res.status(500).json({ 
+        res.status(500).json({
             error: 'Unable to fetch statistics',
-            details: error.message 
+            details: error.message
         });
     }
 };

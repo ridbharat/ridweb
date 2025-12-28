@@ -49,12 +49,12 @@ exports.addBook = async (req, res) => {
 // Get all ebooks (with Backblaze image URLs)
 exports.getEbooks = async (req, res) => {
   try {
-    const books = await Book.find({});
-    const moreBooks = await Book.find({});
+    // Optimized: Single query instead of duplicate calls
+    const books = await Book.find({}).limit(20).sort({ createdAt: -1 });
 
     res.render("ebook", {
       books, // Pass the books array to the template
-      moreBooks,
+      moreBooks: books, // Use same data or add pagination logic
     });
   } catch (err) {
     console.error(err);
