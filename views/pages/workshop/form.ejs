@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apply for Workshop/Internship Certificate</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+    }
+
+    /* Header Styles */
+    .header {
+      background: linear-gradient(to right, #1a365d, #2d3748);
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .web-text p {
+      margin: 2px 0;
+      display: inline-block;
+      margin-right: 20px;
+      font-size: 0.9rem;
+    }
+
+    .web-text span {
+      color: #63b3ed;
+      font-weight: 500;
+    }
+
+    .right-text {
+      display: flex;
+      gap: 20px;
+    }
+
+    .link {
+      color: white;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.9rem;
+      padding: 5px 10px;
+      border-radius: 4px;
+      transition: background 0.3s;
+    }
+
+    .link:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Main Content */
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .logo {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .form-header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .form-title {
+      color: #2d3748;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      background: linear-gradient(to right, #2b6cb0, #4c51bf);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .form-subtitle {
+      color: #4a5568;
+      font-size: 1.1rem;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Form Container */
+    .form-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 50px;
+    }
+
+    .form-section {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-section h2,
+    .info-section h2 {
+      color: #2d3748;
+      margin-bottom: 25px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #4299e1;
+      font-size: 1.8rem;
+    }
+
+    .info-section h2 {
+      color: white;
+      border-bottom: 3px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .info-section h3 {
+      color: white;
+      margin: 20px 0 10px;
+      font-size: 1.2rem;
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #2d3748;
+    }
+
+    label span {
+      color: #e53e3e;
+      font-weight: bold;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s;
+      background: white;
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: #4299e1;
+      box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+    }
+
+    /* Certificate Type Options */
+    .cert-type-container {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .cert-type-option {
+      flex: 1;
+      min-width: 140px;
+    }
+
+    .cert-type-option input[type="radio"] {
+      display: none;
+    }
+
+    .cert-type-option label {
+      display: block;
+      padding: 15px;
+      background: #f7fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .cert-type-option input[type="radio"]:checked+label {
+      background: #4299e1;
+      color: white;
+      border-color: #4299e1;
+      box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);
+    }
+
+    /* Duration Section */
+    .duration-container {
+      display: flex;
+      gap: 15px;
+    }
+
+    .duration-input {
+      flex: 2;
+    }
+
+    .duration-unit {
+      flex: 1;
+    }
+
+    /* Buttons */
+    .buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 30px;
+      justify-content: center;
+    }
+
+    button {
+      padding: 15px 30px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s;
+    }
+
+    #submitBtn {
+      background: linear-gradient(to right, #4299e1, #3182ce);
+      color: white;
+      flex: 1;
+      justify-content: center;
+    }
+
+    #submitBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(66, 153, 225, 0.4);
+    }
+
+    #resetBtn {
+      background: #e2e8f0;
+      color: #4a5568;
+      flex: 0.5;
+      justify-content: center;
+    }
+
+    #resetBtn:hover {
+      background: #cbd5e0;
+    }
+
+    /* Success Message */
+    .success-message {
+      display: none;
+      background: linear-gradient(to right, #38a169, #2f855a);
+      color: white;
+      padding: 25px;
+      border-radius: 8px;
+      margin-top: 30px;
+      text-align: center;
+      animation: fadeIn 0.5s;
+    }
+
+    .success-message p {
+      margin: 10px 0;
+    }
+
+    #appIdDisplay {
+      font-size: 1.5rem;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 10px 20px;
+      border-radius: 6px;
+      display: inline-block;
+      margin: 10px 0;
+    }
+
+    /* Info Section */
+    .info-section ul {
+      padding-left: 20px;
+      margin: 15px 0;
+    }
+
+    .info-section li {
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+
+    .important-note {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 25px;
+      border-left: 4px solid #f6e05e;
+    }
+
+    .contact-info {
+      background: #f0fff4;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 25px 0;
+      border-left: 4px solid #38a169;
+    }
+
+    .contact-info p {
+      margin: 5px 0;
+      color: #2d3748;
+    }
+
+    .required-fields {
+      text-align: center;
+      margin-top: 20px;
+      color: #718096;
+      font-size: 0.9rem;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .form-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+
+      .form-title {
+        font-size: 2rem;
+      }
+
+      .header {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .web-text p {
+        display: block;
+        margin: 5px 0;
+      }
+
+      .right-text {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .cert-type-container {
+        flex-direction: column;
+      }
+
+      .duration-container {
+        flex-direction: column;
+      }
+
+      .buttons {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="header">
+      <div class="web-text">
+        <p>
+          Website:
+          <span>RID (Research Innovation & Discovery) by TWKSAA Welfare Foundation</span>
+        </p>
+        <p>Helpline: <span>+91 98927 82728</span></p>
+        <p>Email: <span>supportid@gamil.com</span></p>
+      </div>
+      <div class="right-text">
+        <a class="link"><object class="svg-object" data/assets/icons/important_devices.svg"
+            type="image/svg+xml"></object>Main Content</a>
+        <a class="link" id="fontIncrease">+A A A-</a>
+        <a class="link"><object class="svg-object" data/assets/icons/forum.svg"
+            type="image/svg+xml"></object>Feedback</a>
+        <a class="link"><object class="svg-object" data/assets/icons/support_agent.svg"
+            type="image/svg+xml"></object>Support</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="main-content">
+    <div class="logo">
+      <img src="/assets/background/final_logo.svg" alt="RID Logo" height="82px" />
+    </div>
+
+    <div class="form-header">
+      <h1 class="form-title animate__animated animate__pulse">Workshop/Training Certificate Application</h1>
+      <p class="form-subtitle">Fill out the form below to apply for your certificate. All fields marked with <span style="color: #e53e3e; font-weight: bold">*</span> are required.</p>
+    </div>
+
+    <div class="form-container">
+      <div class="form-section animate__animated animate__fadeInLeft">
+        <h2>Personal Information</h2>
+
+        <form id="applicationForm">
+          <!-- Full Name -->
+          <div class="form-group">
+            <label>Full Name <span>*</span></label>
+            <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" required>
+          </div>
+
+          <!-- Email Address -->
+          <div class="form-group">
+            <label>Email Address <span>*</span></label>
+            <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+          </div>
+
+          <!-- Date of Birth -->
+          <div class="form-group">
+            <label>Date of Birth <span>*</span></label>
+            <input type="date" id="dob" name="dob" required>
+          </div>
+
+          <!-- Phone Number -->
+          <div class="form-group">
+            <label>Phone Number <span>*</span></label>
+            <input type="tel" id="phone" name="phone" placeholder="Enter 10-digit phone number" required pattern="[0-9]{10}">
+          </div>
+
+          <!-- Certificate Type (Workshop/Training) -->
+          <div class="form-group">
+            <label>Certificate Type <span>*</span></label>
+            <div class="cert-type-container">
+              <div class="cert-type-option">
+                <input type="radio" id="workshop" name="certificateType" value="workshop" required>
+                <label for="workshop">Workshop</label>
+              </div>
+             
+              <div class="cert-type-option">
+                <input type="radio" id="training" name="certificateType" value="training">
+                <label for="training">Training</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Duration -->
+          <div class="form-group">
+            <label>Duration <span>*</span></label>
+            <div class="duration-container">
+              <div class="duration-input">
+                <input type="number" id="duration" name="duration" min="1" max="365" placeholder="Enter duration" required>
+              </div>
+              <div class="duration-unit">
+                <select id="durationUnit" name="durationUnit" required>
+                  <option value="" disabled selected>Unit</option>
+                  <option value="hours">Hours</option>
+                  <option value="weeks">Weeks</option>
+                  <option value="months">Months</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact Information Note -->
+          <div class="contact-info">
+            <p><strong>Important:</strong> Certificate and updates will be sent to the provided email and phone number.</p>
+            <p>Please ensure your contact information is correct.</p>
+          </div>
+
+          <!-- Buttons -->
+          <div class="buttons">
+            <button type="submit" id="submitBtn">
+              <span class="material-symbols-outlined">send</span>Submit Application
+            </button>
+            <button type="reset" id="resetBtn">
+              <span class="material-symbols-outlined">restart_alt</span>Reset Form
+            </button>
+          </div>
+
+          <div class="required-fields">
+            <p>Fields marked with <span style="color: #e53e3e; font-weight: bold">*</span> are required</p>
+          </div>
+        </form>
+
+        <!-- Success Message -->
+        <div id="successMessage" class="success-message">
+          <p><strong>Application Submitted Successfully!</strong></p>
+          <p>Your application ID is: <strong id="appIdDisplay"></strong></p>
+          <p>Your certificate application has been received. You will receive a confirmation email within 24 hours.</p>
+          <p>Keep your application ID for future reference.</p>
+        </div>
+      </div>
+
+      <!-- Information Section (UNCHANGED - Guidelines remain) -->
+      <div class="info-section animate__animated animate__fadeInRight">
+        <h2>Application Guidelines</h2>
+
+        <p>Welcome to RID's Certificate Application Portal. Please fill out the form completely to apply for your certificate.</p>
+
+        <h3>Required Information:</h3>
+        <ul>
+          <li><strong>Full Name:</strong> Your complete name as per official records</li>
+          <li><strong>Email Address:</strong> Your active email for certificate delivery</li>
+          <li><strong>Date of Birth:</strong> Your birth date</li>
+          <li><strong>Phone Number:</strong> Active 10-digit mobile number</li>
+          <li><strong>Certificate Type:</strong> Select workshop or training</li>
+          <li><strong>Duration:</strong> Enter duration with appropriate unit</li>
+        </ul>
+
+        <h3>Duration Units:</h3>
+        <ul>
+          <li><strong>Hours:</strong> For short workshops (e.g., 2-8 hours)</li>
+          <li><strong>Weeks:</strong> For medium duration programs (1-12 weeks)</li>
+          <li><strong>Months:</strong> For long-term internships (1-12 months)</li>
+        </ul>
+
+        <h3>Certificate Types:</h3>
+        <ul>
+          <li><strong>Workshop:</strong> For short-term skill development sessions</li>
+          <li><strong>Training:</strong> For structured learning programs</li>
+        </ul>
+
+        <h3>Important Information:</h3>
+        <ul>
+          <li>Certificates are issued within 5-7 working days</li>
+          <li>Application updates will be sent to your registered email</li>
+          <li>Keep your application ID safe for future reference</li>
+          <li>For any queries, contact +91 98927 82728</li>
+        </ul>
+
+        <div class="important-note">
+          <p><strong>Note:</strong> Please ensure all information provided is accurate. Incorrect information may delay the issuance of your certificate.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+<script>
+    // Form submission
+    document.getElementById("applicationForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      // Validate form
+      const fullName = document.getElementById("fullName").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const dob = document.getElementById("dob").value;
+      const phone = document.getElementById("phone").value;
+      const certificateType = document.querySelector('input[name="certificateType"]:checked');
+      const duration = document.getElementById("duration").value;
+      const durationUnit = document.getElementById("durationUnit").value;
+
+      // Simple validation
+      if (!fullName || fullName.length < 2) {
+        alert("Please enter a valid full name (minimum 2 characters)");
+        return;
+      }
+
+      if (!email || !isValidEmail(email)) {
+        alert("Please enter a valid email address");
+        return;
+      }
+
+      if (!dob) {
+        alert("Please select your date of birth");
+        return;
+      }
+
+      if (!phone.match(/^[0-9]{10}$/)) {
+        alert("Please enter a valid 10-digit phone number");
+        return;
+      }
+
+      if (!certificateType) {
+        alert("Please select a certificate type");
+        return;
+      }
+
+      if (!duration || duration < 1) {
+        alert("Please enter a valid duration (minimum 1)");
+        return;
+      }
+
+      if (!durationUnit) {
+        alert("Please select a duration unit");
+        return;
+      }
+
+      // Show loading
+      const submitBtn = document.getElementById("submitBtn");
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<span class="material-symbols-outlined">pending</span> Processing...';
+      submitBtn.disabled = true;
+
+      // Prepare data for backend
+      const formData = {
+        fullName: fullName,
+        email: email,
+        dob: dob,
+        phone: phone,
+        certificateType: certificateType.value,
+        duration: parseInt(duration),
+        durationUnit: durationUnit
+      };
+
+     
+
+      try {
+        // Send data to backend API
+        const response = await fetch('http://localhost:9191/api/workshop/apply', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData)
+        });
+
+       
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error("Response error:", errorText);
+          throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+        }
+
+        const result = await response.json();
+        
+
+        if (result.success) {
+          // Show success message with App ID
+          document.getElementById("appIdDisplay").textContent = result.appId;
+          document.getElementById("successMessage").style.display = "block";
+
+          // Reset form
+          document.getElementById("applicationForm").reset();
+
+          // Scroll to success message
+          document.getElementById("successMessage").scrollIntoView({
+            behavior: 'smooth'
+          });
+
+          // Auto-copy App ID to clipboard
+          navigator.clipboard.writeText(result.appId).then(() => {
+            alert("Application ID copied to clipboard: " + result.appId);
+          });
+        } else {
+          alert("Error: " + (result.message || "Unknown error occurred"));
+        }
+
+      } catch (error) {
+        console.error("Form submission error:", error);
+        alert("Error submitting form. Please check console for details or try again.");
+        
+        // Show detailed error in console
+        console.log("Error details:", {
+          message: error.message,
+          stack: error.stack,
+          formData: formData
+        });
+      } finally {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+      }
+    });
+
+    // Email validation function
+    function isValidEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+
+    // Reset form button
+    document.getElementById("resetBtn").addEventListener("click", function () {
+      if (confirm("Are you sure you want to reset the form? All entered data will be lost.")) {
+        document.getElementById("successMessage").style.display = "none";
+      }
+    });
+
+    // Set max date for date of birth (18 years ago)
+    const today = new Date();
+    const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+    document.getElementById("dob").max = maxDate.toISOString().split("T")[0];
+  </script>
+
+</body>
+</html>

@@ -124,8 +124,8 @@ const configureMiddleware = () => {
 
 // ========== VIEW ENGINE SETUP ==========
 const configureViews = () => {
-  app.set("view engine", "ejs");
-  app.set("views", [path.join(__dirname, "views", 'ebook'), path.join(__dirname, "views")]);
+   app.set("view engine", "ejs");
+   app.set("views", [path.join(__dirname, "views", 'ebook'), path.join(__dirname, "views"), path.join(__dirname, "views", 'pages')]);
   app.use(express.static(path.join(__dirname, "public")));
 };
 
@@ -262,38 +262,43 @@ const configureRoutes = () => {
     res.sendFile(path.join(__dirname, "public/pages/admin/admin.html"));
   });
 
-  app.get("/reset-password", (req, res) => {
-    res.sendFile(path.join(__dirname, "public/pages/auth/reset-password.html"));
-  });
+   app.get("/reset-password", (req, res) => {
+     res.render("auth/reset-password");
+   });
 
-  app.get("/forgot-password", (req, res) => {
-    res.sendFile(path.join(__dirname, "public/pages/auth/forgot-password.html"));
-  });
+   app.get("/forgot-password", (req, res) => {
+     res.render("auth/forgot-password");
+   });
 
-  app.get("/form", (req, res) => {
-    res.sendFile(path.join(__dirname, "public/pages/auth/form.html"));
-  });
+   app.get("/form", (req, res) => {
+     res.render("auth/form");
+   });
 
-  app.get("/onlineTest", (req, res) => {
-    res.sendFile(path.join(__dirname, "public/pages/component/onlineTest.html"));
-  });
+   app.get("/onlineTest", (req, res) => {
+     res.render("component/onlineTest");
+   });
 
-  app.get("/login", (req, res) => {
-    res.sendFile(path.join(__dirname, "public/pages/auth/login.html"));
-  });
+   app.get("/login", (req, res) => {
+     res.render("auth/login");
+   });
 
-  app.get("/verify", (req, res) => {
-    res.sendFile(path.join(__dirname, "public/pages/certificate/verify.html"));
-  });
+   app.get("/verify", (req, res) => {
+     res.render("certificate/verify");
+   });
 
-  // ========== WORKSHOP FORM PAGE ==========
-  app.get("/workshop-form", (req, res) => {
-    res.sendFile(path.join(__dirname, "public/pages/workshop/form.html"));
-  });
+   // ========== WORKSHOP FORM PAGE ==========
+   app.get("/workshop-form", (req, res) => {
+     res.render("workshop/form");
+   });
 
-  app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "public/pages/auth/index.html"));
-  });
+   app.get("/", (req, res) => {
+     res.render("index");
+   });
+
+   // ========== ADDITIONAL PAGE ROUTES ==========
+   app.get("/about", (req, res) => {
+     res.render("about/about");
+   });
 
   // app.get("/searchResult", (req, res) => {
   //   res.sendFile(path.join(__dirname, "public", "searchResult.html"));
@@ -303,18 +308,18 @@ const configureRoutes = () => {
     res.sendFile(path.join(__dirname, "public/pages/certificate/serverpdf.html"));
   });
 
-  // ========== CERTIFICATE STATIC ROUTES ==========
-  app.get("/certificate", (req, res) => {
-    res.sendFile(path.join(__dirname, "public/pages/certificate/certificate.html"));
-  });
+   // ========== CERTIFICATE STATIC ROUTES ==========
+   app.get("/certificate", (req, res) => {
+     res.render("certificate/certificate");
+   });
 
-  app.get("/apply-certificate", (req, res) => {
-    res.sendFile(path.join(__dirname, "public/pages/certificate/Applay-certificate.html"));
-  });
+   app.get("/apply-certificate", (req, res) => {
+     res.render("certificate/Applay-certificate");
+   });
 
-  app.get("/ebook", (req, res) => {
-    res.sendFile(path.join(__dirname, "public/pages/ebook/ebook.html"));
-  });
+   app.get("/ebook", (req, res) => {
+     res.render("ebook/ebook");
+   });
 
   // app.get("/get-pdf", (req, res) => {
   //   const pdfPath = path.join(__dirname, "ebookdata", "azenglish.pdf");
@@ -349,10 +354,10 @@ const configureRoutes = () => {
   app.get("/about/about.html", (req, res) => res.redirect("/pages/about/about.html"));
   // Add more if needed
 
-  // ========== CATCH-ALL 404 ==========
-  app.use((req, res) => {
-    res.status(404).sendFile(path.join(__dirname, "public/pages/errors/404.html"));
-  });
+   // ========== CATCH-ALL 404 ==========
+   app.use((req, res) => {
+     res.status(404).render("errors/404");
+   });
 };
 
 // ========== CONFIGURE THE APPLICATION ==========

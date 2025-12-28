@@ -1,0 +1,2821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Admin Dashboard - RID Platform</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css">
+    <style>
+        /* CSS Variables */
+        :root {
+            --primary-color: #003366;
+            --secondary-color: #0a66c2;
+            --accent-color: #ffd700;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --danger-color: #f44336;
+            --info-color: #2196f3;
+            --dark-color: #1a2530;
+            --light-color: #f5f7fa;
+            --sidebar-width: 280px;
+            --header-height: 140px;
+        }
+
+        /* Reset and Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        #admin-content {
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Preloader */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-color) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s;
+        }
+
+        .preloader-logo {
+            width: 120px;
+            height: 120px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+
+        .preloader-text {
+            color: white;
+            font-size: 24px;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 5px solid white;
+            border-top: 5px solid var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-top: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Header */
+        .header {
+            background: rgba(0, 51, 102, 0.95);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 70px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .web-text {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .web-text p {
+            margin: 0;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .web-text span {
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        .right-text {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .link {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger-color);
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        /* Lower Header */
+        .lower-header {
+            background: rgba(255, 255, 255, 0.98);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            height: 70px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo img {
+            height: 45px;
+        }
+
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 10px 15px 10px 40px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            width: 300px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .quick-btn {
+            background: white;
+            border: 2px solid #e0e0e0;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .quick-btn:hover {
+            border-color: var(--secondary-color);
+            background: var(--secondary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(10, 102, 194, 0.3);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 5px 15px;
+            border-radius: 25px;
+            transition: background 0.3s;
+        }
+
+        .user-profile:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Sidebar */
+        .side-bar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--dark-color) 0%, #2c3e50 100%);
+            color: white;
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            bottom: 0;
+            z-index: 900;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+            padding: 20px 0;
+        }
+
+        .side-bar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .side-bar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+
+        .side-bar h2 {
+            color: var(--accent-color);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 20px 25px 10px;
+            margin: 0;
+            opacity: 0.8;
+        }
+
+        .side-bar button {
+            width: calc(100% - 20px);
+            background: transparent;
+            color: rgba(255, 255, 255, 0.8);
+            border: none;
+            padding: 12px 25px;
+            margin: 5px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .side-bar button:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: var(--accent-color);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .side-bar button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(10px);
+        }
+
+        .side-bar button:hover:before {
+            transform: scaleY(1);
+        }
+
+        .side-bar button.active {
+            background: rgba(10, 102, 194, 0.3);
+            color: white;
+            box-shadow: inset 0 0 20px rgba(10, 102, 194, 0.2);
+        }
+
+        .side-bar button.active:before {
+            transform: scaleY(1);
+        }
+
+        .badge {
+            background: var(--accent-color);
+            color: var(--dark-color);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-left: auto;
+        }
+
+        .menu-icon {
+            display: none;
+            position: fixed;
+            top: 90px;
+            left: 20px;
+            z-index: 1001;
+            background: var(--secondary-color);
+            color: white;
+            padding: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+
+        .menu-icon:hover {
+            transform: rotate(90deg);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 30px;
+            transition: margin-left 0.3s ease;
+            min-height: calc(100vh - var(--header-height));
+        }
+
+        .main-content.full-width {
+            margin-left: 0;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+        }
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .trend-up {
+            color: var(--success-color);
+        }
+
+        .trend-down {
+            color: var(--danger-color);
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            margin: 10px 0;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .stat-progress {
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border-radius: 3px;
+            transition: width 1s ease;
+        }
+
+        /* Charts Container */
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .chart-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chart-btn {
+            background: #f5f7fa;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .chart-btn:hover {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+
+        /* Recent Activity */
+        .activity-feed {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            transition: all 0.3s;
+        }
+
+        .activity-item:hover {
+            background: #eef2f7;
+            transform: translateX(5px);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Data Tables */
+        .data-table-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 40px;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .table-tools {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .table-filter {
+            display: flex;
+            gap: 10px;
+        }
+
+        .filter-select {
+            padding: 8px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .table-search {
+            position: relative;
+        }
+
+        .table-search input {
+            padding: 8px 15px 8px 35px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            width: 200px;
+        }
+
+        .table-search .search-icon {
+            left: 10px;
+            font-size: 14px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1200px;
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 500;
+            position: sticky;
+            top: 0;
+        }
+
+        .data-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+
+        .btn-view {
+            background: #e3f2fd;
+            color: var(--secondary-color);
+        }
+
+        .btn-edit {
+            background: #fff8e1;
+            color: var(--warning-color);
+        }
+
+        .btn-delete {
+            background: #ffebee;
+            color: var(--danger-color);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .pagination-btn {
+            padding: 8px 15px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .pagination-btn:hover {
+            border-color: var(--secondary-color);
+            color: var(--secondary-color);
+        }
+
+        .pagination-btn.active {
+            background: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 25px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s;
+        }
+
+        .modal-close:hover {
+            color: var(--danger-color);
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-footer {
+            padding: 20px 25px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        /* Form Styles */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.1);
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            padding-right: 40px;
+        }
+
+        /* File Upload */
+        .file-upload {
+            border: 2px dashed #e0e0e0;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-upload:hover {
+            border-color: var(--secondary-color);
+            background: #f8fafc;
+        }
+
+        .file-upload.dragover {
+            border-color: var(--secondary-color);
+            background: #e8f0fe;
+        }
+
+        .file-list {
+            margin-top: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .file-item {
+            background: #f5f7fa;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .file-remove {
+            color: var(--danger-color);
+            cursor: pointer;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 25px;
+        }
+
+        .tab-btn {
+            padding: 15px 25px;
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-weight: 500;
+            color: #666;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover {
+            color: var(--secondary-color);
+        }
+
+        .tab-btn.active {
+            color: var(--secondary-color);
+        }
+
+        .tab-btn.active:after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--secondary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Calendar */
+        .calendar-widget {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 40px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+        }
+
+        .calendar-day {
+            padding: 10px;
+            text-align: center;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .calendar-day:hover {
+            background: #f5f7fa;
+        }
+
+        .calendar-day.today {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .calendar-day.event {
+            background: #e3f2fd;
+            color: var(--secondary-color);
+        }
+
+        /* Kanban Board */
+        .kanban-board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .kanban-column {
+            background: #f5f7fa;
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .column-title {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .column-count {
+            background: var(--secondary-color);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        .kanban-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            cursor: move;
+            transition: all 0.3s;
+        }
+
+        .kanban-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .item-title {
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .item-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Toast Notifications */
+        .toastify-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toastify-toast {
+            background: white;
+            color: #333;
+            border-radius: 12px;
+            padding: 20px;
+            min-width: 300px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            animation: slideInRight 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .toastify-toast:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+            background: var(--success-color);
+        }
+
+        .toastify-toast.error:before {
+            background: var(--danger-color);
+        }
+
+        .toastify-toast.warning:before {
+            background: var(--warning-color);
+        }
+
+        .toastify-toast.info:before {
+            background: var(--info-color);
+        }
+
+        .toastify-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .toastify-icon {
+            font-size: 24px;
+        }
+
+        .toastify-message {
+            flex: 1;
+        }
+
+        .toastify-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .toastify-close {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #666;
+            padding: 0;
+        }
+
+        /* Dark Mode */
+        .dark-mode-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+
+        .toggle-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+
+        .toggle-btn:hover {
+            transform: rotate(45deg);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .header {
+            background: rgba(26, 37, 48, 0.95);
+        }
+
+        body.dark-mode .lower-header {
+            background: rgba(30, 41, 59, 0.98);
+            color: white;
+        }
+
+        body.dark-mode .side-bar {
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+        }
+
+        body.dark-mode .stat-card,
+        body.dark-mode .chart-card,
+        body.dark-mode .activity-feed,
+        body.dark-mode .data-table-container {
+            background: #1e293b;
+            color: white;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark-mode .data-table th {
+            background: linear-gradient(135deg, #475569 0%, #64748b 100%);
+        }
+
+        body.dark-mode .data-table td {
+            border-color: #475569;
+        }
+
+        body.dark-mode .data-table tr:hover {
+            background: #334155;
+        }
+
+        body.dark-mode .form-control {
+            background: #334155;
+            border-color: #475569;
+            color: white;
+        }
+
+        body.dark-mode .modal-content {
+            background: #1e293b;
+            color: white;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .side-bar {
+                transform: translateX(-100%);
+            }
+
+            .side-bar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .menu-icon {
+                display: block;
+            }
+
+            .header, .lower-header {
+                padding: 15px;
+            }
+
+            .search-box input {
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-controls {
+                flex-wrap: wrap;
+            }
+
+            .quick-actions {
+                display: none;
+            }
+
+            .user-info {
+                display: none;
+            }
+
+            .table-tools {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .table-filter {
+                flex-direction: column;
+            }
+
+            .table-search input {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .web-text {
+                display: none;
+            }
+
+            .right-text {
+                gap: 10px;
+            }
+
+            .link span {
+                display: none;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 10px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        .slide-up {
+            animation: slideUp 0.5s ease;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary-color);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
+        }
+
+        body.dark-mode ::-webkit-scrollbar-track {
+            background: #334155;
+        }
+
+        body.dark-mode ::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+
+        /* Utility Classes */
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .text-left { text-align: left; }
+        .d-flex { display: flex; }
+        .d-none { display: none; }
+        .align-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-10 { gap: 10px; }
+        .gap-20 { gap: 20px; }
+        .mb-20 { margin-bottom: 20px; }
+        .mb-30 { margin-bottom: 30px; }
+        .mt-20 { margin-top: 20px; }
+        .p-20 { padding: 20px; }
+        .w-100 { width: 100%; }
+        .h-100 { height: 100%; }
+        .rounded { border-radius: 10px; }
+        .shadow { box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); }
+        .cursor-pointer { cursor: pointer; }
+    </style>
+</head>
+<body>
+    <!-- Preloader -->
+    <div class="preloader" id="preloader">
+        <div class="preloader-logo">
+            <i class="fas fa-graduation-cap fa-3x" style="color: #003366;"></i>
+        </div>
+        <div class="preloader-text">RID Admin Panel</div>
+        <div class="loader"></div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="header">
+            <div class="web-text">
+                <p><i class="fas fa-globe"></i> <span>RID Platform v3.0</span></p>
+                <p><i class="fas fa-phone"></i> <span>+91-98927 82728</span></p>
+                <p><i class="fas fa-envelope"></i> <span>support@rid.org</span></p>
+            </div>
+            <div class="right-text">
+                <a href="#" class="link" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                    <span>Dark Mode</span>
+                </a>
+                <a href="#" class="link" id="fullscreenToggle">
+                    <i class="fas fa-expand"></i>
+                    <span>Fullscreen</span>
+                </a>
+                <a href="#" class="link notification-link">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                    <span class="notification-badge">5</span>
+                </a>
+                <div class="user-profile" id="userProfile">
+                    <div class="user-avatar">AD</div>
+                    <div class="user-info">
+                        <div class="user-name">Admin User</div>
+                        <div class="user-role">Super Administrator</div>
+                    </div>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="lower-header">
+            <div class="logo">
+                <img src="/assets/background/final_logo.svg" alt="RID Logo">
+                <div class="logo-text">Research Innovation & Discovery</div>
+            </div>
+            <div class="header-controls">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="globalSearch" placeholder="Search users, certificates, books...">
+                </div>
+                <div class="quick-actions">
+                    <button class="quick-btn" onclick="showModal('newUserModal')">
+                        <i class="fas fa-user-plus"></i> New User
+                    </button>
+                    <button class="quick-btn" onclick="uploadcertificate()">
+                        <i class="fas fa-certificate"></i> Upload Cert
+                    </button>
+                    <button class="quick-btn" onclick="ShowUploadBook()">
+                        <i class="fas fa-book"></i> Add Book
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Menu Toggle -->
+    <span class="menu-icon" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </span>
+
+    <!-- Sidebar -->
+    <div class="side-bar" id="sidebar">
+        <div class="div1">
+            <h2>Dashboard</h2>
+            <button class="active" onclick="showDashboard()">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </button>
+            <button onclick="showAnalytics()">
+                <i class="fas fa-chart-line"></i>
+                <span>Analytics</span>
+                <span class="badge">New</span>
+            </button>
+
+            <h2>User Management</h2>
+            <button onclick="showTotalList()">
+                <i class="fas fa-users"></i>
+                <span>All Users</span>
+            </button>
+            <button onclick="showRoleManagement()">
+                <i class="fas fa-user-tag"></i>
+                <span>Role Management</span>
+            </button>
+            <button onclick="showUserGroups()">
+                <i class="fas fa-layer-group"></i>
+                <span>User Groups</span>
+            </button>
+            <button onclick="showPermissionManager()">
+                <i class="fas fa-shield-alt"></i>
+                <span>Permissions</span>
+            </button>
+
+            <h2>Content Management</h2>
+            <button onclick="uploadcertificate()">
+                <i class="fas fa-certificate"></i>
+                <span>Certificates</span>
+            </button>
+            <button onclick="ShowUploadBook()">
+                <i class="fas fa-book"></i>
+                <span>E-Books</span>
+            </button>
+            <button onclick="showContentLibrary()">
+                <i class="fas fa-photo-video"></i>
+                <span>Media Library</span>
+            </button>
+            <button onclick="showBlogManager()">
+                <i class="fas fa-blog"></i>
+                <span>Blog Posts</span>
+            </button>
+
+            <h2>Advanced Features</h2>
+            <button onclick="showWorkflowManager()">
+                <i class="fas fa-sitemap"></i>
+                <span>Workflows</span>
+            </button>
+            <button onclick="showAutomationRules()">
+                <i class="fas fa-robot"></i>
+                <span>Automation</span>
+            </button>
+            <button onclick="showApiManager()">
+                <i class="fas fa-code"></i>
+                <span>API Manager</span>
+            </button>
+            <button onclick="showIntegrations()">
+                <i class="fas fa-plug"></i>
+                <span>Integrations</span>
+            </button>
+
+            <h2>System Tools</h2>
+            <button onclick="showAuditLogs()">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Audit Logs</span>
+            </button>
+            <button onclick="showBackupManager()">
+                <i class="fas fa-database"></i>
+                <span>Backup & Restore</span>
+            </button>
+            <button onclick="showSystemSettings()">
+                <i class="fas fa-cogs"></i>
+                <span>System Settings</span>
+            </button>
+            <button onclick="showEmailTemplates()">
+                <i class="fas fa-envelope"></i>
+                <span>Email Templates</span>
+            </button>
+        </div>
+
+        <div style="padding: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+            <button id="logout-btn" style="background: rgba(244, 67, 54, 0.2); color: #ff6b6b;">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Dashboard Content -->
+        <div id="dashboardContent">
+            <div class="dashboard-header mb-30">
+                <h1 style="color: var(--primary-color); margin-bottom: 10px;">Welcome back, Admin!</h1>
+                <p style="color: #666;">Here's what's happening with your platform today.</p>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-trend trend-up">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>12%</span>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="totalUsers">1,847</div>
+                    <div class="stat-label">Total Users Registered</div>
+                    <div class="stat-progress">
+                        <div class="progress-bar" style="width: 75%;"></div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #2196f3 0%, #0d47a1 100%);">
+                            <i class="fas fa-certificate"></i>
+                        </div>
+                        <div class="stat-trend trend-up">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>8%</span>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="totalCertificates">892</div>
+                    <div class="stat-label">Certificates Issued</div>
+                    <div class="stat-progress">
+                        <div class="progress-bar" style="width: 60%;"></div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #ff9800 0%, #ef6c00 100%);">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="stat-trend trend-up">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>5%</span>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="totalBooks">156</div>
+                    <div class="stat-label">E-Books Available</div>
+                    <div class="stat-progress">
+                        <div class="progress-bar" style="width: 45%;"></div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #9c27b0 0%, #6a1b9a 100%);">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-trend trend-up">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>23%</span>
+                        </div>
+                    </div>
+                    <div class="stat-value">₹ 2,45,670</div>
+                    <div class="stat-label">Total Revenue</div>
+                    <div class="stat-progress">
+                        <div class="progress-bar" style="width: 85%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-container mb-30">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">User Growth</h3>
+                        <div class="chart-actions">
+                            <button class="chart-btn">Daily</button>
+                            <button class="chart-btn active">Weekly</button>
+                            <button class="chart-btn">Monthly</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="userGrowthChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Resource Distribution</h3>
+                        <div class="chart-actions">
+                            <button class="chart-btn">View Details</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="resourceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity & Calendar -->
+            <div class="d-flex gap-20 mb-30" style="flex-wrap: wrap;">
+                <div class="activity-feed" style="flex: 1; min-width: 300px;">
+                    <div class="activity-header">
+                        <h3>Recent Activity</h3>
+                        <button class="chart-btn">View All</button>
+                    </div>
+                    <div class="activity-list" id="activityList">
+                        <!-- Activity items will be populated here -->
+                    </div>
+                </div>
+
+                <div class="calendar-widget" style="flex: 1; min-width: 300px;">
+                    <div class="calendar-header">
+                        <h3>Calendar</h3>
+                        <div class="chart-actions">
+                            <button class="chart-btn"><i class="fas fa-chevron-left"></i></button>
+                            <span style="padding: 0 15px;">March 2024</span>
+                            <button class="chart-btn"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                    <div class="calendar-grid" id="calendarGrid">
+                        <!-- Calendar will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Users Table -->
+            <div class="data-table-container">
+                <div class="table-header">
+                    <h3>Recent Users</h3>
+                    <div class="table-tools">
+                        <div class="table-filter">
+                            <select class="filter-select">
+                                <option>All Roles</option>
+                                <option>Admin</option>
+                                <option>Teacher</option>
+                                <option>Student</option>
+                            </select>
+                            <select class="filter-select">
+                                <option>All Status</option>
+                                <option>Active</option>
+                                <option>Pending</option>
+                                <option>Inactive</option>
+                            </select>
+                        </div>
+                        <div class="table-search">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" placeholder="Search users...">
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table" id="recentUsersTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Join Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentUsersBody">
+                            <!-- Users will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination">
+                    <button class="pagination-btn active">1</button>
+                    <button class="pagination-btn">2</button>
+                    <button class="pagination-btn">3</button>
+                    <button class="pagination-btn">Next</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Other sections will be dynamically loaded here -->
+        <div id="dynamicContent"></div>
+    </div>
+
+    <!-- Dark Mode Toggle -->
+    <div class="dark-mode-toggle">
+        <button class="toggle-btn" id="darkModeToggle">
+            <i class="fas fa-moon"></i>
+        </button>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toastify-container" id="toastContainer"></div>
+
+    <!-- Modals -->
+    <div class="modal" id="newUserModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New User</h3>
+                <button class="modal-close" onclick="closeModal('newUserModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="newUserForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">First Name</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Role</label>
+                            <select class="form-control form-select" required>
+                                <option value="">Select Role</option>
+                                <option value="admin">Administrator</option>
+                                <option value="teacher">Teacher</option>
+                                <option value="student">Student</option>
+                                <option value="organisation">Organisation</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Gender</label>
+                            <select class="form-control form-select" required>
+                                <option value="">Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="action-btn btn-view" onclick="closeModal('newUserModal')">Cancel</button>
+                <button class="action-btn btn-edit" type="submit" form="newUserForm">Create User</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    
+    <script>
+        // Preloader
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                document.getElementById('preloader').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('preloader').style.display = 'none';
+                }, 500);
+            }, 1500);
+        });
+
+        // State Management
+        const state = {
+            currentView: 'dashboard',
+            darkMode: localStorage.getItem('darkMode') === 'true',
+            sidebarOpen: window.innerWidth > 992,
+            notifications: [],
+            currentUser: {
+                name: 'Admin User',
+                role: 'super_admin',
+                email: 'admin@rid.org'
+            }
+        };
+
+        // Initialize
+        function init() {
+            // Set dark mode
+            if (state.darkMode) {
+                document.body.classList.add('dark-mode');
+            }
+            
+            // Initialize components
+            initCharts();
+            initActivityFeed();
+            initCalendar();
+            initRecentUsers();
+            initEventListeners();
+            
+            // Update UI
+            updateSidebarState();
+        }
+
+        // Sidebar Management
+        function toggleSidebar() {
+            state.sidebarOpen = !state.sidebarOpen;
+            updateSidebarState();
+        }
+
+        function updateSidebarState() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            
+            if (state.sidebarOpen) {
+                sidebar.classList.remove('active');
+                mainContent.classList.remove('full-width');
+            } else {
+                sidebar.classList.add('active');
+                mainContent.classList.add('full-width');
+            }
+        }
+
+        // Dark Mode Toggle
+        function toggleDarkMode() {
+            state.darkMode = !state.darkMode;
+            document.body.classList.toggle('dark-mode', state.darkMode);
+            localStorage.setItem('darkMode', state.darkMode);
+            
+            showToast(state.darkMode ? 'Dark mode enabled' : 'Light mode enabled', 'info');
+        }
+
+        // Fullscreen Toggle
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Toast Notification System
+        function showToast(message, type = 'info', duration = 5000) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toastify-toast ${type}`;
+            
+            const icons = {
+                success: '✓',
+                error: '✗',
+                warning: '⚠',
+                info: 'ℹ'
+            };
+            
+            toast.innerHTML = `
+                <div class="toastify-content">
+                    <div class="toastify-icon">${icons[type] || 'ℹ'}</div>
+                    <div class="toastify-message">
+                        <div class="toastify-title">${type.charAt(0).toUpperCase() + type.slice(1)}</div>
+                        <div>${message}</div>
+                    </div>
+                    <button class="toastify-close" onclick="this.parentElement.parentElement.remove()">&times;</button>
+                </div>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Auto remove after duration
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.style.animation = 'slideInRight 0.3s ease reverse';
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, duration);
+        }
+
+        // Modal System
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // View Navigation
+        function showDashboard() {
+            state.currentView = 'dashboard';
+            document.getElementById('dashboardContent').style.display = 'block';
+            document.getElementById('dynamicContent').innerHTML = '';
+            updateSidebarActive('dashboard');
+        }
+
+        function showTotalList() {
+            state.currentView = 'users';
+            document.getElementById('dashboardContent').style.display = 'none';
+            
+            const content = `
+                <div class="data-table-container slide-up">
+                    <div class="table-header">
+                        <h3>All Registered Users</h3>
+                        <div class="table-tools">
+                            <button class="action-btn btn-edit" onclick="exportUsers()">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                            <button class="action-btn btn-view" onclick="showModal('newUserModal')">
+                                <i class="fas fa-plus"></i> Add User
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Registration Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allUsersTable">
+                                <!-- Users will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination">
+                        <button class="pagination-btn active">1</button>
+                        <button class="pagination-btn">2</button>
+                        <button class="pagination-btn">3</button>
+                        <button class="pagination-btn">4</button>
+                        <button class="pagination-btn">5</button>
+                        <button class="pagination-btn">Next</button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('dynamicContent').innerHTML = content;
+            loadAllUsers();
+            updateSidebarActive('users');
+        }
+
+        function showAnalytics() {
+            state.currentView = 'analytics';
+            document.getElementById('dashboardContent').style.display = 'none';
+            const content = `
+                <div class="slide-up">
+                    <h2 style="color: var(--primary-color); margin-bottom: 30px;">Advanced Analytics</h2>
+                    
+                    <div class="tabs mb-30">
+                        <button class="tab-btn active" onclick="switchAnalyticsTab('overview')">Overview</button>
+                        <button class="tab-btn" onclick="switchAnalyticsTab('users')">User Analytics</button>
+                        <button class="tab-btn" onclick="switchAnalyticsTab('content')">Content Analytics</button>
+                        <button class="tab-btn" onclick="switchAnalyticsTab('revenue')">Revenue Analytics</button>
+                    </div>
+                    
+                    <div id="analyticsContent">
+                        <div class="charts-container mb-30">
+                            <div class="chart-card">
+                                <h3 class="chart-title">User Engagement Metrics</h3>
+                                <div class="chart-container">
+                                    <canvas id="engagementChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="chart-card">
+                                <h3 class="chart-title">Platform Performance</h3>
+                                <div class="chart-container">
+                                    <canvas id="performanceChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="data-table-container">
+                            <h3>Key Metrics</h3>
+                            <div class="dashboard-grid mb-30">
+                                <div class="stat-card">
+                                    <div class="stat-value">94.2%</div>
+                                    <div class="stat-label">User Retention Rate</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-value">2.3min</div>
+                                    <div class="stat-label">Avg Session Duration</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-value">87%</div>
+                                    <div class="stat-label">Platform Uptime</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-value">4.8/5</div>
+                                    <div class="stat-label">User Satisfaction</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('dynamicContent').innerHTML = content;
+            initAnalyticsCharts();
+            updateSidebarActive('analytics');
+        }
+
+        // Chart Initialization
+        function initCharts() {
+            // User Growth Chart
+            const userGrowthCtx = document.getElementById('userGrowthChart').getContext('2d');
+            new Chart(userGrowthCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'New Users',
+                        data: [65, 78, 90, 120, 150, 180],
+                        borderColor: '#0a66c2',
+                        backgroundColor: 'rgba(10, 102, 194, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Resource Distribution Chart
+            const resourceCtx = document.getElementById('resourceChart').getContext('2d');
+            new Chart(resourceCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Certificates', 'E-Books', 'Research Papers', 'Videos'],
+                    datasets: [{
+                        data: [45, 25, 20, 10],
+                        backgroundColor: [
+                            '#0a66c2',
+                            '#4caf50',
+                            '#ff9800',
+                            '#9c27b0'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function initAnalyticsCharts() {
+            // Engagement Chart
+            const engagementCtx = document.getElementById('engagementChart').getContext('2d');
+            new Chart(engagementCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Active Users',
+                        data: [1200, 1900, 1500, 2000, 1800, 1400, 1600],
+                        backgroundColor: '#0a66c2'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Performance Chart
+            const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+            new Chart(performanceCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['Speed', 'Reliability', 'UX', 'Features', 'Support', 'Security'],
+                    datasets: [{
+                        label: 'Performance',
+                        data: [90, 85, 88, 92, 87, 95],
+                        backgroundColor: 'rgba(10, 102, 194, 0.2)',
+                        borderColor: '#0a66c2'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        // Activity Feed
+        function initActivityFeed() {
+            const activities = [
+                {
+                    icon: 'fas fa-user-plus',
+                    color: '#4caf50',
+                    text: 'New user registered: John Doe',
+                    time: '2 minutes ago'
+                },
+                {
+                    icon: 'fas fa-certificate',
+                    color: '#2196f3',
+                    text: 'Certificate issued to Sarah Smith',
+                    time: '15 minutes ago'
+                },
+                {
+                    icon: 'fas fa-book',
+                    color: '#ff9800',
+                    text: 'New e-book uploaded: "Advanced React"',
+                    time: '1 hour ago'
+                },
+                {
+                    icon: 'fas fa-exclamation-triangle',
+                    color: '#f44336',
+                    text: 'System alert: High server load detected',
+                    time: '3 hours ago'
+                },
+                {
+                    icon: 'fas fa-chart-line',
+                    color: '#9c27b0',
+                    text: 'Monthly report generated',
+                    time: '5 hours ago'
+                }
+            ];
+
+            const activityList = document.getElementById('activityList');
+            activities.forEach(activity => {
+                const item = document.createElement('div');
+                item.className = 'activity-item';
+                item.innerHTML = `
+                    <div class="activity-icon" style="background: ${activity.color};">
+                        <i class="${activity.icon}"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-text">${activity.text}</div>
+                        <div class="activity-time">${activity.time}</div>
+                    </div>
+                `;
+                activityList.appendChild(item);
+            });
+        }
+
+        // Calendar
+        function initCalendar() {
+            const calendarGrid = document.getElementById('calendarGrid');
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            
+            // Add day headers
+            days.forEach(day => {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = day;
+                dayElement.style.fontWeight = 'bold';
+                calendarGrid.appendChild(dayElement);
+            });
+            
+            // Add calendar days
+            for (let i = 1; i <= 31; i++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = i;
+                
+                // Mark today
+                if (i === 15) {
+                    dayElement.classList.add('today');
+                }
+                
+                // Mark events
+                if ([5, 12, 20, 28].includes(i)) {
+                    dayElement.classList.add('event');
+                }
+                
+                calendarGrid.appendChild(dayElement);
+            }
+        }
+
+        // Recent Users
+        function initRecentUsers() {
+            const users = [
+                {
+                    name: 'Alex Johnson',
+                    email: 'alex@example.com',
+                    role: 'Admin',
+                    status: 'active',
+                    joinDate: '2024-03-15'
+                },
+                {
+                    name: 'Maria Garcia',
+                    email: 'maria@example.com',
+                    role: 'Teacher',
+                    status: 'active',
+                    joinDate: '2024-03-14'
+                },
+                {
+                    name: 'David Chen',
+                    email: 'david@example.com',
+                    role: 'Student',
+                    status: 'pending',
+                    joinDate: '2024-03-13'
+                },
+                {
+                    name: 'Sarah Williams',
+                    email: 'sarah@example.com',
+                    role: 'Organisation',
+                    status: 'active',
+                    joinDate: '2024-03-12'
+                },
+                {
+                    name: 'Robert Kim',
+                    email: 'robert@example.com',
+                    role: 'Student',
+                    status: 'inactive',
+                    joinDate: '2024-03-11'
+                }
+            ];
+
+            const tbody = document.getElementById('recentUsersBody');
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>${user.role}</td>
+                    <td><span class="status-badge status-${user.status}">${user.status.charAt(0).toUpperCase() + user.status.slice(1)}</span></td>
+                    <td>${user.joinDate}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn btn-view" onclick="viewUser('${user.email}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn btn-edit" onclick="editUser('${user.email}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Load All Users
+        function loadAllUsers() {
+            // Simulate API call
+            setTimeout(() => {
+                const users = Array.from({length: 20}, (_, i) => ({
+                    id: i + 1,
+                    name: `User ${i + 1}`,
+                    email: `user${i + 1}@example.com`,
+                    role: ['Student', 'Teacher', 'Admin', 'Organisation'][i % 4],
+                    status: ['active', 'pending', 'inactive'][i % 3],
+                    date: '2024-03-' + (10 + (i % 20)).toString().padStart(2, '0')
+                }));
+
+                const tbody = document.getElementById('allUsersTable');
+                users.forEach(user => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${user.id}</td>
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                        <td>${user.role}</td>
+                        <td><span class="status-badge status-${user.status}">${user.status.charAt(0).toUpperCase() + user.status.slice(1)}</span></td>
+                        <td>${user.date}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn btn-view" onclick="viewUser('${user.email}')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn btn-edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn btn-delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }, 500);
+        }
+
+        // Event Listeners
+        function initEventListeners() {
+            // Dark mode toggle
+            document.getElementById('themeToggle').addEventListener('click', toggleDarkMode);
+            document.getElementById('darkModeToggle').addEventListener('click', toggleDarkMode);
+            
+            // Fullscreen toggle
+            document.getElementById('fullscreenToggle').addEventListener('click', toggleFullscreen);
+            
+            // User profile dropdown
+            document.getElementById('userProfile').addEventListener('click', function() {
+                showToast('Profile menu clicked', 'info');
+            });
+            
+            // Global search
+            document.getElementById('globalSearch').addEventListener('input', function(e) {
+                if (e.target.value.length > 2) {
+                    // Implement search functionality
+                    showToast(`Searching for: ${e.target.value}`, 'info');
+                }
+            });
+            
+            // Logout
+            document.getElementById('logout-btn').addEventListener('click', function() {
+                if (confirm('Are you sure you want to logout?')) {
+                    showToast('Logging out...', 'info');
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 1500);
+                }
+            });
+            
+            // Form submissions
+            document.getElementById('newUserForm')?.addEventListener('submit', function(e) {
+                e.preventDefault();
+                showToast('New user created successfully!', 'success');
+                closeModal('newUserModal');
+                this.reset();
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Ctrl + K for search
+                if (e.ctrlKey && e.key === 'k') {
+                    e.preventDefault();
+                    document.getElementById('globalSearch').focus();
+                }
+                
+                // Escape to close modals
+                if (e.key === 'Escape') {
+                    const modals = document.querySelectorAll('.modal.active');
+                    modals.forEach(modal => modal.classList.remove('active'));
+                }
+                
+                // Ctrl + D for dark mode
+                if (e.ctrlKey && e.key === 'd') {
+                    e.preventDefault();
+                    toggleDarkMode();
+                }
+            });
+            
+            // Resize handler
+            window.addEventListener('resize', function() {
+                state.sidebarOpen = window.innerWidth > 992;
+                updateSidebarState();
+            });
+        }
+
+        // Export functionality
+        function exportUsers() {
+            showToast('Exporting user data...', 'info');
+            // Implement export logic here
+            setTimeout(() => {
+                showToast('User data exported successfully!', 'success');
+            }, 2000);
+        }
+
+        // Update sidebar active state
+        function updateSidebarActive(view) {
+            // Remove active class from all buttons
+            document.querySelectorAll('.side-bar button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Add active class to current view button
+            const activeBtn = document.querySelector(`.side-bar button[onclick*="${view}"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+        }
+
+        // Tab switching for analytics
+        function switchAnalyticsTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update content
+            const content = document.getElementById('analyticsContent');
+            // Implement tab content switching
+        }
+
+        // User management functions
+        function viewUser(email) {
+            showToast(`Viewing user: ${email}`, 'info');
+            // Implement user view modal
+        }
+
+        function editUser(email) {
+            showToast(`Editing user: ${email}`, 'info');
+            // Implement user edit functionality
+        }
+
+        // Certificate upload
+        function uploadcertificate() {
+            state.currentView = 'certificate';
+            document.getElementById('dashboardContent').style.display = 'none';
+            
+            const content = `
+                <div class="slide-up">
+                    <div class="data-table-container mb-30">
+                        <div class="table-header">
+                            <h3>Upload Certificate</h3>
+                            <div class="table-tools">
+                                <button class="action-btn btn-view" onclick="showBulkUpload()">
+                                    <i class="fas fa-upload"></i> Bulk Upload
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <form id="certificateForm" style="max-width: 600px; margin: 0 auto;">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">Certificate ID *</label>
+                                    <input type="text" class="form-control" placeholder="RIDXR24354" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Issue Date *</label>
+                                    <input type="date" class="form-control" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Recipient Name *</label>
+                                <input type="text" class="form-control" placeholder="John Doe" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Description</label>
+                                <textarea class="form-control" rows="3" placeholder="Optional description"></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Certificate File *</label>
+                                <div class="file-upload" id="certificateUpload">
+                                    <i class="fas fa-cloud-upload-alt fa-3x" style="color: #666; margin-bottom: 15px;"></i>
+                                    <p>Drag & drop your certificate file here or click to browse</p>
+                                    <input type="file" accept=".pdf,.jpg,.png" style="display: none;">
+                                </div>
+                                <div class="file-list" id="fileList"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Additional Settings</label>
+                                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                                    <label style="display: flex; align-items: center; gap: 5px;">
+                                        <input type="checkbox"> Send email notification
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 5px;">
+                                        <input type="checkbox"> Make publicly verifiable
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 5px;">
+                                        <input type="checkbox"> Add to blockchain
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div style="text-align: center; margin-top: 30px;">
+                                <button type="submit" class="action-btn btn-edit" style="padding: 15px 40px; font-size: 16px;">
+                                    <i class="fas fa-upload"></i> Upload Certificate
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('dynamicContent').innerHTML = content;
+            initCertificateUpload();
+            updateSidebarActive('certificate');
+        }
+
+        function initCertificateUpload() {
+            const uploadArea = document.getElementById('certificateUpload');
+            const fileInput = uploadArea.querySelector('input[type="file"]');
+            const fileList = document.getElementById('fileList');
+            
+            uploadArea.addEventListener('click', () => fileInput.click());
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+            uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                handleFiles(e.dataTransfer.files);
+            });
+            
+            fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+            
+            function handleFiles(files) {
+                fileList.innerHTML = '';
+                Array.from(files).forEach(file => {
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-item';
+                    fileItem.innerHTML = `
+                        <i class="fas fa-file"></i>
+                        <span>${file.name}</span>
+                        <span class="file-remove" onclick="this.parentElement.remove()">
+                            <i class="fas fa-times"></i>
+                        </span>
+                    `;
+                    fileList.appendChild(fileItem);
+                });
+            }
+        }
+
+        function ShowUploadBook() {
+            state.currentView = 'ebook';
+            document.getElementById('dashboardContent').style.display = 'none';
+            
+            const content = `
+                <div class="slide-up">
+                    <div class="tabs mb-30">
+                        <button class="tab-btn active">Upload New</button>
+                        <button class="tab-btn">Manage Books</button>
+                        <button class="tab-btn">Categories</button>
+                        <button class="tab-btn">Statistics</button>
+                    </div>
+                    
+                    <div class="data-table-container">
+                        <h3>Upload E-Book</h3>
+                        
+                        <form id="ebookForm" style="max-width: 800px; margin: 0 auto;">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">Book Title *</label>
+                                    <input type="text" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Author Name *</label>
+                                    <input type="text" class="form-control" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">ISBN</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Publish Year *</label>
+                                    <input type="number" class="form-control" min="1900" max="2024" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Rating (1-5)</label>
+                                    <input type="number" class="form-control" min="1" max="5" step="0.1">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Description *</label>
+                                <textarea class="form-control" rows="4" required></textarea>
+                            </div>
+                            
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">Category *</label>
+                                    <select class="form-control form-select" required>
+                                        <option value="">Select Category</option>
+                                        <option>Education</option>
+                                        <option>Technology</option>
+                                        <option>Science</option>
+                                        <option>Research</option>
+                                        <option>Others</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Language</label>
+                                    <select class="form-control form-select">
+                                        <option>English</option>
+                                        <option>Hindi</option>
+                                        <option>Spanish</option>
+                                        <option>French</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Price (₹)</label>
+                                    <input type="number" class="form-control" step="0.01" placeholder="0.00 for free">
+                                </div>
+                            </div>
+                            
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">Book Cover *</label>
+                                    <div class="file-upload">
+                                        <p>Upload book cover image (JPG/PNG)</p>
+                                        <input type="file" accept="image/*" style="display: none;">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Book PDF *</label>
+                                    <div class="file-upload">
+                                        <p>Upload book PDF file</p>
+                                        <input type="file" accept=".pdf" style="display: none;">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Additional Metadata</label>
+                                <textarea class="form-control" rows="3" placeholder="Keywords, tags, etc."></textarea>
+                            </div>
+                            
+                            <div style="text-align: center; margin-top: 30px;">
+                                <button type="submit" class="action-btn btn-edit" style="padding: 15px 40px; font-size: 16px;">
+                                    <i class="fas fa-book"></i> Publish Book
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('dynamicContent').innerHTML = content;
+            updateSidebarActive('ebook');
+        }
+
+        // Advanced feature placeholders
+        function showRoleManagement() {
+            showToast('Role Management feature coming soon!', 'info');
+        }
+
+        function showUserGroups() {
+            showToast('User Groups feature coming soon!', 'info');
+        }
+
+        function showPermissionManager() {
+            showToast('Permission Manager feature coming soon!', 'info');
+        }
+
+        function showContentLibrary() {
+            showToast('Media Library feature coming soon!', 'info');
+        }
+
+        function showBlogManager() {
+            showToast('Blog Manager feature coming soon!', 'info');
+        }
+
+        function showWorkflowManager() {
+            showToast('Workflow Manager feature coming soon!', 'info');
+        }
+
+        function showAutomationRules() {
+            showToast('Automation Rules feature coming soon!', 'info');
+        }
+
+        function showApiManager() {
+            showToast('API Manager feature coming soon!', 'info');
+        }
+
+        function showIntegrations() {
+            showToast('Integrations feature coming soon!', 'info');
+        }
+
+        function showAuditLogs() {
+            showToast('Audit Logs feature coming soon!', 'info');
+        }
+
+        function showBackupManager() {
+            showToast('Backup Manager feature coming soon!', 'info');
+        }
+
+        function showSystemSettings() {
+            showToast('System Settings feature coming soon!', 'info');
+        }
+
+        function showEmailTemplates() {
+            showToast('Email Templates feature coming soon!', 'info');
+        }
+
+        function showBulkUpload() {
+            showToast('Bulk Upload feature coming soon!', 'info');
+        }
+
+        // Initialize the application
+        init();
+    </script>
+</body>
+</html>
+          
