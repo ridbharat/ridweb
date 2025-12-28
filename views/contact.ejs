@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>
+    <%= title %>
+  </title>
+  <link rel="stylesheet" href="/css/contact.css">
+</head>
+
+<body>
+  <div class="contact-container">
+    <h1>Contact Us</h1>
+    <p>Get in touch and let us know how we can help.</p>
+    <div class="cards">
+      <div class="card">
+        <div class="icon">
+          <img src="https://img.icons8.com/ios-filled/50/null/marker.png" alt="Location Icon">
+        </div>
+        <h2>Address</h2>
+        <p>Research Innovation & Discovery Bhopal (MP)</p>
+        <a href="https://www.google.com/maps/place/RID+BHARAT" target="_blank">View on map →</a>
+      </div>
+      <div class="card">
+        <div class="icon">
+          <img src="https://img.icons8.com/ios-filled/50/null/phone.png" alt="Phone Icon">
+        </div>
+        <h2>Contact</h2>
+        <p>+91 9829782728</p>
+        <a href="tel:+919829782728">Call →</a>
+      </div>
+      <div class="card">
+        <div class="icon">
+          <img src="https://img.icons8.com/ios-filled/50/null/email.png" alt="Email Icon">
+        </div>
+        <h2>Email</h2>
+        <p>ridorg.in@gmail.com</p>
+        <a href="mailto:ridorg.in@gmail.com">Email Now →</a>
+      </div>
+    </div>
+
+    <div class="contact-form-container">
+      <form id="contactForm" class="contact-form" action="/contact/submit" method="POST">
+        <h2>Send Us a Message</h2>
+        <div class="form-group">
+          <input type="text" id="name" name="name" placeholder="Your Name*" required>
+        </div>
+        <div class="form-group">
+          <input type="email" id="email" name="email" placeholder="Your Email*" required>
+        </div>
+        <div class="form-group">
+          <input type="number" id="number" name="number" placeholder="Your Number*" required>
+        </div>
+        <div class="form-group">
+          <textarea id="message" name="message" placeholder="Your Message" rows="4" required></textarea>
+        </div>
+        <button type="submit" class="submit-btn">Send Message</button>
+      </form>
+    </div>
+  </div>
+</body>
+
+</html>

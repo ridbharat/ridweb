@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RID's E-Book Center</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --light-bg: #f8f9fa;
+            --dark-text: #2c3e50;
+            --light-text: #ecf0f1;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark-text);
+            margin: 0;
+            padding: 0;
+        }
+        
+        .E-Book-Parent {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        .left-side-panel {
+            width: 320px;
+            background: linear-gradient(135deg, var(--secondary-color), #1a2530);
+            color: var(--light-text);
+            padding: 20px;
+            box-shadow: 3px 0 10px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .logo img {
+            max-width: 120px;
+            border-radius: 50%;
+            border: 3px solid var(--primary-color);
+        }
+        
+        .special {
+            font-weight: 700;
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary-color);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .left-side-panel h1 {
+            font-size: 1.2rem;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+        
+        /* Main Content Styles */
+        .right-side-main {
+            flex: 1;
+            margin-left: 320px;
+            padding: 30px;
+            background-color: var(--light-bg);
+        }
+        
+        .section-title {
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+        
+        /* Book Card Styles */
+        .bookcard-holder {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .book-card1 {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 5px solid var(--primary-color);
+            position: relative;
+        }
+        
+        .book-card1:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .book-card1 img {
+            width: 100px;
+            height: 130px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .book-card1 h3 {
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--secondary-color);
+            flex: 1;
+        }
+        
+        .book-card1 p {
+            margin-bottom: 5px;
+            color: #7f8c8d;
+            flex: 1;
+        }
+        
+        .readbtn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-left: auto;
+            margin-right: 10px;
+        }
+        
+        .readbtn:hover {
+            background: #2980b9;
+            color: white;
+        }
+        
+        /* Sidebar Book Cards */
+        .book-card-holder-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .book-card-sidebar {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            align-items: flex-start;
+            transition: background 0.3s ease;
+            position: relative;
+        }
+        
+        .book-card-sidebar:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .book-card-sidebar img {
+            width: 60px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-right: 15px;
+        }
+        
+        .title-desc h3 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+        
+        .desc {
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+            color: #bdc3c7;
+        }
+        
+        .author-name {
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+            color: #95a5a6;
+        }
+        
+        .rating {
+            color: #f39c12;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+        
+        .year {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        .sidebar-btns {
+            display: flex;
+            gap: 5px;
+            margin-top: 8px;
+        }
+        
+        .sidebar-readbtn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background 0.3s ease;
+        }
+        
+        .sidebar-readbtn:hover {
+            background: #2980b9;
+        }
+        
+        /* Modal Styles */
+        .pdf-viewer {
+            width: 100%;
+            height: 70vh;
+            border: none;
+            border-radius: 8px;
+        }
+        
+        /* Latest Reading Section */
+        .latest-reading-section {
+            margin-top: 30px;
+        }
+        
+        .latest-reading-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .view-all-btn {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        
+        .view-all-btn:hover {
+            text-decoration: underline;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 20px;
+            color: #95a5a6;
+            font-style: italic;
+        }
+        
+        .empty-state i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-left: auto;
+        }
+        
+        /* PDF Modal Styles */
+        .pdf-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .pdf-modal-content {
+            background: #fff;
+            width: 95%;
+            height: 95%;
+            margin: 2.5% auto;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: slideDown 0.4s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .pdf-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            background: var(--secondary-color);
+            color: white;
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .pdf-modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .pdf-close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: white;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .pdf-close-btn:hover {
+            color: var(--accent-color);
+        }
+        
+        .pdf-modal-body {
+            flex: 1;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        /* Category Filter Styles */
+        .filter-container {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .category-filter {
+            padding: 8px 15px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            background-color: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .category-filter:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        /* Active Category Indicator */
+        .active-category {
+            font-size: 1rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        /* Books Count */
+        .books-count {
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            margin-left: 8px;
+        }
+        
+        /* Search Bar Styles */
+        .search-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 45px 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7f8c8d;
+            font-size: 1.2rem;
+        }
+        
+        /* Search Results Info */
+        .search-info {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            background: #e8f4fc;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .clear-search {
+            color: var(--accent-color);
+            cursor: pointer;
+            margin-left: 10px;
+            font-weight: 600;
+        }
+        
+        .clear-search:hover {
+            text-decoration: underline;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .E-Book-Parent {
+                flex-direction: column;
+            }
+            
+            .left-side-panel {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            
+            .right-side-main {
+                margin-left: 0;
+            }
+            
+            .book-card1 {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .book-card1 img {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+            
+            .readbtn {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+            
+            .pdf-modal-content {
+                width: 98%;
+                height: 98%;
+                margin: 1% auto;
+            }
+            
+            .filter-container {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+                margin-top: 15px;
+            }
+            
+            .category-filter {
+                width: 100%;
+            }
+
+            .active-category {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="E-Book-Parent">
+        <!-- Sidebar -->
+        <div class="left-side-panel">
+            <div class="logo">
+                <img src="./assets/background/RID-logo.png" alt="RID Logo">
+            </div>
+            
+            <h1 class="special">RID's E-Book Center</h1>
+            
+            <!-- Latest Reading Section -->
+            <div class="latest-reading-section">
+                <div class="latest-reading-header">
+                    <h1>Latest Reading</h1>
+                    <a href="#" class="view-all-btn" id="clearHistoryBtn">Clear All</a>
+                </div>
+                <div class="book-card-holder-sidebar" id="sidebarBooks">
+                    <!-- Latest reading books will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Book Cards Right Side -->
+        <div class="right-side-main">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h2 class="section-title">Available E-Books</h2>
+                    <div id="activeCategory" class="active-category"></div>
+                </div>
+                <div class="filter-container">
+                    <!-- Category Filter -->
+                    <select class="category-filter" id="categoryFilter">
+                        <option value="all">All Categories</option>
+                        <option value="web-development">Web Development</option>
+                        <option value="python">Python</option>
+                        <option value="database">Database</option>
+                        <option value="network">Network</option>
+                        <option value="cyber">Cyber</option>
+                        <option value="programming">Programming</option>
+                    </select>
+                    <!-- Dashboard Button -->
+                    <a href="loginn.html" class="btn btn-primary">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search books by title or author...">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            
+            <!-- Search Results Info -->
+            <div id="searchInfo" class="search-info" style="display: none;"></div>
+            
+            <div class="bookcard-holder" id="bookContainer"></div>
+        </div>
+    </div>
+    
+
+    <!-- Custom PDF Modal -->
+    <div class="pdf-modal" id="pdfModal">
+        <div class="pdf-modal-content">
+            <div class="pdf-modal-header">
+                <h2 class="pdf-modal-title" id="pdfModalTitle">E-Book Viewer</h2>
+                <button class="pdf-close-btn" onclick="closePDFModal()">&times;</button>
+            </div>
+            <div class="pdf-modal-body">
+                <iframe id="pdfFrame" class="pdf-viewer" frameborder="0"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Global books array
+        let books = [];
+        // Track reading history
+        let readingHistory = [];
+        // Current category filter
+        let currentCategory = 'all';
+        // Current search term
+        let currentSearchTerm = '';
+
+        // Function to render main book cards vertically
+        function renderBooks() {
+            const bookContainer = document.getElementById("bookContainer");
+            const activeCategoryElement = document.getElementById("activeCategory");
+            const searchInfoElement = document.getElementById("searchInfo");
+            bookContainer.innerHTML = '';
+            
+            // Filter books by category
+            let filteredBooks = currentCategory === 'all' 
+                ? books 
+                : books.filter(book => book.category === currentCategory);
+            
+            // Filter books by search term if exists
+            if (currentSearchTerm) {
+                filteredBooks = filteredBooks.filter(book => 
+                    book.title.toLowerCase().includes(currentSearchTerm.toLowerCase()) ||
+                    book.author.toLowerCase().includes(currentSearchTerm.toLowerCase())
+                );
+            }
+            
+            // Update active category display
+            if (currentCategory === 'all') {
+                activeCategoryElement.innerHTML = `Showing all categories <span class="books-count">${filteredBooks.length}</span>`;
+            } else {
+                const categoryName = document.querySelector(`#categoryFilter option[value="${currentCategory}"]`).textContent;
+                activeCategoryElement.innerHTML = `Showing: ${categoryName} <span class="books-count">${filteredBooks.length}</span>`;
+            }
+            
+            // Update search info
+            if (currentSearchTerm) {
+                searchInfoElement.style.display = 'block';
+                searchInfoElement.innerHTML = `
+                    Showing ${filteredBooks.length} results for "<strong>${currentSearchTerm}</strong>"
+                    <span class="clear-search" onclick="clearSearch()">Clear search</span>
+                `;
+            } else {
+                searchInfoElement.style.display = 'none';
+            }
+            
+            if (filteredBooks.length === 0) {
+                let message = '';
+                if (currentSearchTerm && currentCategory !== 'all') {
+                    message = `No books found for "${currentSearchTerm}" in ${currentCategory} category`;
+                } else if (currentSearchTerm) {
+                    message = `No books found for "${currentSearchTerm}"`;
+                } else if (currentCategory !== 'all') {
+                    message = `No books available in ${currentCategory} category`;
+                } else {
+                    message = 'No books available in the library';
+                }
+                
+                bookContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-book"></i>
+                        <p>${message}</p>
+                        <p>${currentSearchTerm || currentCategory !== 'all' ? 'Try clearing search or selecting a different category' : 'Add a new book to get started'}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            filteredBooks.forEach((book, index) => {
+                const card = document.createElement("div");
+                card.classList.add("book-card1");
+                card.innerHTML = `
+                    <img src="${book.img}" alt="${book.title}">
+                    <div class="book-details">
+                        <h3>${book.title}</h3>
+                        <p><strong>Author:</strong> ${book.author}</p>
+                        <p><strong>Published:</strong> ${book.year}</p>
+                        <p><strong>Category:</strong> <span class="badge bg-primary">${getCategoryDisplayName(book.category)}</span></p>
+                        <p><strong>Rating:</strong> ${book.rating}</p>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="readbtn" onclick="openPDF(${book.index})">
+                            <i class="fas fa-book-open me-1"></i>Read Now
+                        </button>
+                    </div>
+                `;
+                bookContainer.appendChild(card);
+            });
+        }
+
+        // Helper function to get display name for category
+        function getCategoryDisplayName(category) {
+            const categoryMap = {
+                'web-development': 'Web Development',
+                'python': 'Python',
+                'database': 'Database',
+                'network': 'Network',
+                'cyber': 'Cyber Security',
+                'programming': 'Programming'
+            };
+            return categoryMap[category] || category;
+        }
+
+        // Function to render sidebar latest books
+        function renderSidebarBooks() {
+            const sidebarBooks = document.getElementById("sidebarBooks");
+            sidebarBooks.innerHTML = '';
+            
+            if (readingHistory.length === 0) {
+                sidebarBooks.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-book-open"></i>
+                        <p>No recent reading history</p>
+                        <p>Start reading a book to see it here</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Show the 3 most recent books
+            const recentBooks = readingHistory.slice(-3).reverse();
+            
+            recentBooks.forEach((book, index) => {
+                const card = document.createElement("div");
+                card.classList.add("book-card-sidebar");
+                card.innerHTML = `
+                    <img src="${book.img}" alt="${book.title}">
+                    <div class="title-desc">
+                        <h3>${book.title}</h3>
+                        <p class="desc">Learn ${book.title.split(" ")[0]}.</p>
+                        <p class="author-name">Author: ${book.author}</p>
+                        <div class="rating">${book.rating}</div>
+                        <div class="sidebar-btns">
+                            <button class="sidebar-readbtn" onclick="openPDFFromHistory(${book.index})">
+                                <i class="fas fa-book-open me-1"></i>Continue
+                            </button>
+                        </div>
+                        <p class="year">Last read: ${book.lastRead}</p>
+                    </div>
+                `;
+                sidebarBooks.appendChild(card);
+            });
+        }
+
+        // Open PDF in modal and update reading history
+        function openPDF(bookIndex) {
+            const book = books.find(b => b.index === bookIndex);
+            if (!book) {
+                alert("Book not found!");
+                return;
+            }
+            
+            const iframe = document.getElementById("pdfFrame");
+            
+            // Check if PDF data is available
+            if (book.pdfData) {
+                // Set PDF source from base64 data
+                iframe.src = book.pdfData;
+            } else if (book.pdf) {
+                // If it's a URL, use it directly
+                iframe.src = book.pdf;
+            } else {
+                alert("PDF not available for this book");
+                return;
+            }
+            
+            // Update modal title
+            document.getElementById("pdfModalTitle").textContent = `Reading: ${book.title}`;
+
+            // Disable right-click inside iframe
+            iframe.onload = () => {
+                try {
+                    iframe.contentWindow.document.addEventListener('contextmenu', e => e.preventDefault());
+                } catch (e) {
+                    console.log("Could not disable right-click in iframe");
+                }
+            };
+
+            // Show modal
+            document.getElementById('pdfModal').style.display = 'block';
+            
+            // Update reading history
+            updateReadingHistory(bookIndex);
+        }
+
+        // Open PDF from reading history
+        function openPDFFromHistory(bookIndex) {
+            openPDF(bookIndex);
+        }
+
+        // Close PDF modal
+        function closePDFModal() {
+            document.getElementById('pdfModal').style.display = 'none';
+            document.getElementById('pdfFrame').src = '';
+        }
+
+        // Close modal when clicking outside of it
+        document.getElementById('pdfModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePDFModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePDFModal();
+            }
+        });
+
+        // Update reading history
+        function updateReadingHistory(bookIndex) {
+            const book = books.find(b => b.index === bookIndex);
+            if (!book) return;
+            
+            // Check if book is already in history
+            const existingIndex = readingHistory.findIndex(item => item.index === bookIndex);
+            
+            // Get current date and time
+            const now = new Date();
+            const formattedDate = `${now.toLocaleDateString()} ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+            
+            if (existingIndex !== -1) {
+                // Update existing entry
+                readingHistory[existingIndex].lastRead = formattedDate;
+            } else {
+                // Add new entry
+                readingHistory.push({
+                    index: bookIndex,
+                    title: book.title,
+                    img: book.img,
+                    author: book.author,
+                    rating: book.rating,
+                    lastRead: formattedDate
+                });
+            }
+            
+            // Update sidebar
+            renderSidebarBooks();
+            
+            // Save to localStorage
+            localStorage.setItem('readingHistory', JSON.stringify(readingHistory));
+        }
+
+        // Disable right-click on modal itself
+        document.getElementById('pdfModal').addEventListener('contextmenu', e => e.preventDefault());
+
+        // Load books and reading history from localStorage
+        function loadData() {
+            const savedBooks = localStorage.getItem('books');
+            if (savedBooks) {
+                books = JSON.parse(savedBooks);
+            }
+            
+            const savedHistory = localStorage.getItem('readingHistory');
+            if (savedHistory) {
+                readingHistory = JSON.parse(savedHistory);
+            }
+        }
+
+        // Clear all reading history
+        document.getElementById('clearHistoryBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            if (readingHistory.length === 0) {
+                alert("No reading history to clear.");
+                return;
+            }
+            
+            if (confirm("Are you sure you want to clear all reading history?")) {
+                readingHistory = [];
+                renderSidebarBooks();
+                // Save to localStorage
+                localStorage.setItem('readingHistory', JSON.stringify(readingHistory));
+            }
+        });
+
+        // Add sample books if none exist
+        function addSampleBooks() {
+            if (books.length === 0) {
+                books = [
+                    {
+                        index: 0,
+                        title: "JavaScript: The Good Parts",
+                        author: "Douglas Crockford",
+                        year: 2008,
+                        img: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                        pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+                        rating: "★★★★★",
+                        category: "web-development"
+                    },
+                    {
+                        index: 1,
+                        title: "Clean Code",
+                        author: "Robert C. Martin",
+                        year: 2008,
+                        img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                        pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+                        rating: "★★★★☆",
+                        category: "programming"
+                    },
+                    {
+                        index: 2,
+                        title: "The Pragmatic Programmer",
+                        author: "Andrew Hunt, David Thomas",
+                        year: 1999,
+                        img: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                        pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+                        rating: "★★★★★",
+                        category: "programming"
+                    },
+                    {
+                        index: 3,
+                        title: "Python Crash Course",
+                        author: "Eric Matthes",
+                        year: 2015,
+                        img: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                        pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+                        rating: "★★★★★",
+                        category: "python"
+                    },
+                    {
+                        index: 4,
+                        title: "Learning Python",
+                        author: "Mark Lutz",
+                        year: 2013,
+                        img: "https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                        pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+                        rating: "★★★★☆",
+                        category: "python"
+                    },
+                    {
+                        index: 5,
+                        title: "Database System Concepts",
+                        author: "Abraham Silberschatz",
+                        year: 2019,
+                        img: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                        pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+                        rating: "★★★★★",
+                        category: "database"
+                    },
+                    {
+                        index: 6,
+                        title: "SQL in 10 Minutes",
+                        author: "Ben Forta",
+                        year: 2019,
+                        img: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                        pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+                        rating: "★★★★☆",
+                        category: "database"
+                    },
+                    {
+                        index: 7,
+                        title: "Computer Networking",
+                        author: "James Kurose",
+                        year: 2017,
+                        img: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                        pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+                        rating: "★★★★★",
+                        category: "network"
+                    },
+                    {
+                        index: 8,
+                        title: "Network Security Essentials",
+                        author: "William Stallings",
+                        year: 2016,
+                        img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                        pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+                        rating: "★★★★☆",
+                        category: "network"
+                    },
+                    {
+                        index: 9,
+                        title: "The Web Application Hacker's Handbook",
+                        author: "Dafydd Stuttard",
+                        year: 2011,
+                        img: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                        pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+                        rating: "★★★★★",
+                        category: "cyber"
+                    },
+                    {
+                        index: 10,
+                        title: "Hacking: The Art of Exploitation",
+                        author: "Jon Erickson",
+                        year: 2008,
+                        img: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                        pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+                        rating: "★★★★☆",
+                        category: "cyber"
+                    },
+                    {
+                        index: 11,
+                        title: "HTML and CSS: Design and Build Websites",
+                        author: "Jon Duckett",
+                        year: 2011,
+                        img: "https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+                        pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+                        rating: "★★★★★",
+                        category: "web-development"
+                    }
+                ];
+                
+                // Save to localStorage
+                localStorage.setItem('books', JSON.stringify(books));
+            }
+        }
+
+        // Handle category filter change
+        document.getElementById('categoryFilter').addEventListener('change', function(e) {
+            currentCategory = e.target.value;
+            renderBooks();
+        });
+
+        // Handle search input
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            currentSearchTerm = e.target.value.trim();
+            renderBooks();
+        });
+
+        // Clear search function
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            currentSearchTerm = '';
+            renderBooks();
+        }
+
+        // Initial render
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            addSampleBooks();
+            renderBooks();
+            renderSidebarBooks();
+            
+            // Set initial active category display
+            const activeCategoryElement = document.getElementById("activeCategory");
+            activeCategoryElement.innerHTML = `Showing all categories <span class="books-count">${books.length}</span>`;
+        });
+    </script>
+</body>
+</html>

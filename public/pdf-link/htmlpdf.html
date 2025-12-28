@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PDF Viewer with Pagination and Download</title>
+
+  <!-- Material Symbols Outlined font (full set) -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+  <!-- PDF.js library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.15.349/pdf.min.js"></script>
+
+  <!-- Your CSS file -->
+  <link rel="stylesheet" href="../css/pdfdata.css" />
+</head>
+<body>
+  <div class="controls">
+    <button id="prev-page">
+      <span class="material-symbols-outlined">arrow_back_ios</span>
+    </button>
+
+    <span>
+      Page <span id="page-num">1</span> of <span id="page-count">?</span>
+    </span>
+
+    <button id="next-page">
+      <span class="material-symbols-outlined">arrow_forward_ios</span>
+    </button>
+  </div>
+
+  <div id="loading">Loading PDF...</div>
+  <div id="pdf-render"></div>
+
+
+
+    <!-- <button id="download-btn" style="display:none;" onclick="downloadPDF()">Download PDF</button> -->
+
+
+    <script src="../js/pdfdata.js"></script>
+      <script src="../js/ebookpdf-keyboard-arrows.js"></script>
+</body>
+
+</html>

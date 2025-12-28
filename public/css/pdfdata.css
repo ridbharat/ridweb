@@ -1,0 +1,121 @@
+/* === General Body Styles === */
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  padding: 20px;
+  background-color: #f4f4f4;
+}
+
+/* === Controls Section === */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+/* === Navigation Buttons === */
+button#prev-page,
+button#next-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  font-size: 13px;
+  background-color: #03446c9b;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  min-width: 60px;
+  height: 36px;
+}
+
+button#prev-page:hover,
+button#next-page:hover {
+  background-color: #022d4a;
+}
+
+/* === Other Buttons (General) === */
+button {
+  padding: 6px 12px;
+  font-size: 13px;
+  background-color: #03446c9b;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+/* === Material Icons Styling === */
+.material-symbols-outlined {
+  font-size: 20px;
+  vertical-align: middle;
+}
+
+/* === PDF Display Container === */
+#pdf-render {
+  margin: 0 auto;
+  text-align: center;
+  background: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  width: 100%;
+  max-width: 1000px;
+}
+
+/* === Canvas Styling === */
+canvas {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+/* === Loading Indicator === */
+#loading {
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #555;
+}
+
+/* === Download Button === */
+#download-btn {
+  padding: 6px 12px;
+  font-size: 13px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+  display: inline-block;
+}
+
+#download-btn:hover {
+  background-color: #218838;
+}
+
+/* === Responsive Design === */
+@media (max-width: 768px) {
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  /* Apply full width only to buttons that are NOT prev/next page */
+  button:not(#prev-page):not(#next-page) {
+  
+  min-width: 60px;
+
+  }
+
+  #pdf-render {
+    padding: 10px;
+    border-radius: 15px;
+  }
+}

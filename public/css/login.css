@@ -1,0 +1,285 @@
+body {
+  font-family: "poppins", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  overflow: hidden;
+
+  top: 50%;
+  left: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+label {
+  font-size: 16px;
+  font-weight: 550;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: bold;
+  font-size: 40px;
+  color: #333;
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1.3px solid #ccc;
+  border-radius: 3px;
+  box-sizing: border-box;
+  font-size: 16px;
+  font-family: inherit;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+  border-color: #aaa;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+button {
+  background-color: rgba(10, 102, 194, 1);
+  color: #fff;
+  padding: 10px 20px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 16px;
+  font-family: inherit;
+}
+
+button:hover {
+  background-color: #4b89fb;
+}
+
+button:active {
+  background-color: #005bff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+a {
+  color: #007bff;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: #005bff;
+  text-decoration: underline;
+}
+#loginForm {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.left-content {
+  width: 40vw;
+  /* margin: 0 100px 0 0; */
+  padding: 40px;
+  /* background: rgb(255, 176, 176); */
+}
+.left-content img {
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+
+  overflow: hidden;
+}
+
+.left-content h2 {
+  color: rgba(10, 102, 194, 1);
+  font-size: 30px;
+  font-weight: normal;
+  text-align: center;
+}
+.inner-div {
+  background: rgba(243, 247, 252, 1);
+  padding: 40px;
+  margin: 0 40px;
+  border-radius: 5px;
+  border: 1.2px solid rgba(202, 202, 202, 0.788);
+}
+
+.footer .text {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+}
+
+.footer .links {
+  align-items: center;
+}
+.footer .links a {
+  color: #000;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer .links a:hover {
+  color: rgba(10, 102, 194, 1);
+  text-decoration: underline;
+}
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.footer .links {
+  margin: 20px 0;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+#forgetPass {
+  align-self: flex-end;
+  margin-top: -10px;
+  font-size: 14px;
+  color: #007bff;
+  text-decoration: none;
+  padding: 10px 5px;
+}
+
+#forgetPass:hover {
+  text-decoration: underline;
+}
+
+.forgot-password-container {
+  height: 45vh;
+  width: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  /* width: 300px; */
+  text-align: center;
+}
+
+.forget-title {
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.email-label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.email-in {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+#forgetBtn {
+  padding: 10px 15px;
+  background-color: #0a66c2;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#forgetBtn:hover {
+  background-color: #084a9b;
+}
+
+#message {
+  margin-top: 15px;
+  color: red;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+  body {
+    margin-left: 0; /* Center for mobile */
+    font-size: 10px;
+  }
+
+  .left-content {
+    width: 90vw; /* Adjust width for smaller screens */
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 15px; /* Smaller font size for headings */
+  }
+
+  .inner-div {
+    margin: 0 20px; /* Adjust margin */
+    padding: 20px;
+  }
+
+  .footer .text {
+    font-size: 6px; /* Smaller footer text */
+  }
+}
+
+@media (max-width: 480px) {
+  .left-content h2 {
+    font-size: 12px; /* Further reduce font size */
+  }
+
+  button,
+  input[type="text"],
+  input[type="password"] {
+    padding: 8px; /* Adjust padding */
+    font-size: 7px; /* Smaller font size */
+  }
+
+  label {
+    font-size: 8px;
+  }
+
+  h1 {
+    font-size: 20px;
+  }
+
+  input[type="text"],
+  input[type="password"] {
+    font-size: 8px;
+  }
+
+  button {
+    font-size: 8px;
+  }
+
+  .left-content h2 {
+    font-size: 15px;
+  }
+
+  .footer .text {
+    font-size: 7px;
+  }
+
+  .footer .links a {
+    font-size: 10px;
+  }
+}

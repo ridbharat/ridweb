@@ -1,0 +1,197 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+* {
+  padding: 0;
+  margin: 0;
+}
+header .upper-header {
+  background-color: #083d5d;
+  color: white;
+  display: flex;
+  font-size: small;
+  justify-content: space-between;
+  padding: 5px 10px;
+}
+.upper-header .left-content span {
+  font-weight: 500;
+}
+
+.upper-header .right-content span {
+  align-content: end;
+}
+
+.lower-header {
+  padding: 10px 30px;
+  border-bottom: 0.5px solid #0a66c280;
+}
+
+.upper-header .right-content a {
+  text-decoration: none;
+  color: white;
+  padding: 0px 3px;
+}
+
+.book-detail {
+  display: flex;
+}
+
+.book-detail img {
+  width: 355px;
+  margin: 40px;
+  margin-left: 90px;
+  margin-top: 80px;
+  box-shadow: -6px 3px 13px 3px #a7a2a2;
+  align-items: center;
+}
+
+.main-panel .book-detail .buttons .viewEbook {
+  border: 2px solid #006989;
+  color: #006989;
+  padding: 5px;
+  margin-right: 7px;
+}
+
+.main-panel .book-detail .buttons .readNow {
+  color: white;
+  padding: 5px;
+  background-color: #083d5d;
+}
+
+.main-panel img {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+.book-info {
+  padding: 0;
+  margin: 0;
+  margin-left: 15px;
+}
+
+.book-info p {
+  margin: 0;
+}
+
+.book-image {
+  margin-left: 30px;
+  padding: 0;
+}
+.book-info .buttons {
+  margin-left: 500px;
+  border: none;
+}
+.book-detail .book-info .buttons .viewBTN {
+  padding: 3px 90px 3px 90px;
+  background-color: #083d5d;
+  color: white;
+}
+
+.book-detail .book-info .buttons .readNow {
+  padding: 6px 90px 6px 90px;
+}
+
+@media (max-width: 768px) {
+  header .upper-header {
+    /* font-size: x-small; */
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .main-panel h3 {
+    padding-top: 15px;
+    text-align: center;
+    background-image: linear-gradient(#1284f6, #f14372);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-left: 35px !important;
+    margin-bottom: 10px !important;
+    margin-top: 10px !important;
+  }
+
+  .book-detail {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .book-info br {
+    display: none;
+  }
+
+  .book-info {
+    margin-left: 0;
+    text-align: center;
+  }
+
+  .book-info p {
+    font-size: 14px;
+  }
+
+  .book-info .buttons {
+    margin-left: 15px;
+  }
+  .book-detail img {
+    margin-top: 0;
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin-left: 0;
+    margin-bottom: 20px;
+  }
+
+  .book-detail .book-info .buttons .viewBTN,
+  .book-detail .book-info .buttons .readNow {
+    padding: 8px 20px;
+    margin-top: 30px;
+  }
+  .book-detail .book-info .buttons {
+    display: flex;
+    justify-content: center;
+  }
+}
+.main-panel h3 {
+  margin-left: 40px;
+}
+
+@media (max-width: 480px) {
+  header .upper-header {
+    display: none; /* Hide the upper header */
+  }
+
+  .book-detail {
+    flex-direction: column; /* Stack elements vertically */
+    padding: 20px; /* Add some padding */
+  }
+
+  .book-detail img {
+    margin: 0px 30px 20px 0; /* Adjust margin for better spacing */
+    max-width: 100%; /* Ensure the image is responsive */
+    height: auto; /* Maintain aspect ratio */
+    width: 250px;
+    align-items: center;
+    /* padding: 20px; */
+  }
+
+  .book-info {
+    margin-left: 0; /* Reset margin for mobile view */
+    text-align: center; /* Center align text */
+  }
+
+  .book-info p {
+    font-size: 14px; /* Adjust font size for readability */
+  }
+
+  .book-info .buttons {
+    display: flex; /* Ensure buttons are displayed as a flex container */
+    flex-direction: column; /* Stack buttons vertically */
+    align-items: center; /* Center align buttons */
+    margin-top: 20px; /* Add some space above buttons */
+  }
+
+  .book-detail .book-info .buttons .viewBTN,
+  .book-detail .book-info .buttons .readNow {
+    width: 100%; /* Full width for buttons */
+    padding: 10px; /* Adjust padding for better touch targets */
+    margin: 5px 0; /* Add margin between buttons */
+    font-size: 16px; /* Increase font size for better visibility */
+  }
+}

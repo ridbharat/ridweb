@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - RID's E-Book Center</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --light-bg: #f8f9fa;
+            --dark-text: #2c3e50;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--dark-text);
+            min-height: 100vh;
+            padding: 10px;
+        }
+        
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--secondary-color), #1a2530);
+            color: white;
+            padding: 20px 15px;
+            text-align: center;
+        }
+        
+        .dashboard-header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .dashboard-header p {
+            margin: 10px 0 0;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+        
+        .dashboard-body {
+            padding: 20px 15px;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+        
+        .tab.active {
+            border-bottom: 3px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--secondary-color);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s ease;
+            font-size: 16px;
+            width: 100%;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s ease;
+            font-size: 16px;
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+        
+        .btn-edit {
+            background: #f39c12;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s ease;
+            font-size: 14px;
+            margin-right: 5px;
+            flex: 1;
+        }
+        
+        .btn-edit:hover {
+            background: #e67e22;
+        }
+        
+        .btn-remove {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s ease;
+            font-size: 14px;
+            flex: 1;
+        }
+        
+        .btn-remove:hover {
+            background: #c0392b;
+        }
+        
+        .btn-view {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s ease;
+            font-size: 14px;
+            margin-right: 5px;
+            flex: 1;
+        }
+        
+        .btn-view:hover {
+            background: #219653;
+        }
+        
+        .books-list {
+            margin-top: 20px;
+        }
+        
+        .book-item {
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .book-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .book-image-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .book-item img {
+            width: 100px;
+            height: 130px;
+            object-fit: cover;
+            border-radius: 6px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .book-info {
+            flex: 1;
+            margin-bottom: 15px;
+        }
+        
+        .book-info h4 {
+            margin: 0 0 8px;
+            color: var(--secondary-color);
+            font-size: 1.1rem;
+        }
+        
+        .book-info p {
+            margin: 0 0 5px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .book-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .alert {
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .rating-stars {
+            display: flex;
+            gap: 5px;
+            margin-top: 5px;
+            justify-content: center;
+        }
+        
+        .rating-stars i {
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s;
+            font-size: 1.2rem;
+        }
+        
+        .rating-stars i.active {
+            color: #f39c12;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #95a5a6;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        /* File Upload Styles */
+        .file-upload-container {
+            margin-bottom: 20px;
+        }
+        
+        .file-upload-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--secondary-color);
+        }
+        
+        .file-upload-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .file-upload-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px dashed #3498db;
+            border-radius: 6px;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+        
+        .file-upload-input:hover {
+            background-color: #e8f4fc;
+            border-color: #2980b9;
+        }
+        
+        .file-upload-button {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .file-name {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        
+        .upload-status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .upload-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .upload-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .file-info i {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+        
+        .file-details {
+            flex: 1;
+        }
+        
+        .file-name-large {
+            font-weight: 500;
+            margin-bottom: 2px;
+            font-size: 0.9rem;
+        }
+        
+        .file-size {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+        }
+        
+        .remove-file {
+            background: none;
+            border: none;
+            color: var(--accent-color);
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+        
+        /* PDF Viewer Styles */
+        .pdf-viewer-modal .modal-dialog {
+            max-width: 95%;
+            height: 95%;
+            margin: 10px auto;
+        }
+        
+        .pdf-viewer-modal .modal-content {
+            height: 100%;
+        }
+        
+        .pdf-viewer-modal .modal-body {
+            padding: 0;
+            height: calc(100% - 60px);
+        }
+        
+        .pdf-viewer {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .pdf-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .pdf-title {
+            font-weight: 500;
+            margin: 0;
+            font-size: 1rem;
+        }
+        
+        /* Tablet and Desktop Styles */
+        @media (min-width: 768px) {
+            body {
+                padding: 20px;
+            }
+            
+            .dashboard-header {
+                padding: 25px;
+            }
+            
+            .dashboard-header h1 {
+                font-size: 2rem;
+            }
+            
+            .dashboard-body {
+                padding: 30px;
+            }
+            
+            .tabs {
+                overflow-x: visible;
+                white-space: normal;
+            }
+            
+            .book-item {
+                flex-direction: row;
+                align-items: center;
+            }
+            
+            .book-image-container {
+                margin-bottom: 0;
+                margin-right: 20px;
+                justify-content: flex-start;
+            }
+            
+            .book-info {
+                margin-bottom: 0;
+            }
+            
+            .book-info h4 {
+                font-size: 1.25rem;
+            }
+            
+            .book-actions {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .btn-view, .btn-edit, .btn-remove {
+                flex: none;
+                width: auto;
+            }
+            
+            .btn-primary, .btn-secondary {
+                width: auto;
+            }
+            
+            .rating-stars {
+                justify-content: flex-start;
+            }
+        }
+        
+        @media (min-width: 992px) {
+            .book-actions {
+                flex-direction: row;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1><i class="fas fa-tachometer-alt me-2"></i>Book Dashboard</h1>
+            <p>Manage all books in your library</p>
+        </div>
+        
+        <div class="dashboard-body">
+            <div class="tabs">
+                <div class="tab active" data-tab="books-list">All Books</div>
+                <div class="tab" data-tab="add-book">Add New Book</div>
+            </div>
+            
+            <div id="successAlert" class="alert alert-success hidden">
+                <i class="fas fa-check-circle me-2"></i>Operation completed successfully!
+            </div>
+            
+            <div id="errorAlert" class="alert alert-error hidden">
+                <i class="fas fa-exclamation-circle me-2"></i>Please fill in all required fields.
+            </div>
+            
+            <!-- Books List Tab -->
+            <div class="tab-content active" id="books-list">
+                <h3>All Books in Library</h3>
+                <p>Edit or remove books from your library</p>
+                
+                <div class="books-list" id="booksListContainer">
+                    <!-- Books will be dynamically added here -->
+                </div>
+            </div>
+            
+            <!-- Add Book Tab -->
+            <div class="tab-content" id="add-book">
+                <h3>Add New Book</h3>
+                <p>Fill out the form below to add a new book to the library</p>
+                
+                <form id="addBookForm">
+                    <div class="form-group">
+                        <label class="form-label" for="bookTitle">Book Title *</label>
+                        <input type="text" id="bookTitle" class="form-control" placeholder="Enter book title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="bookAuthor">Author *</label>
+                        <input type="text" id="bookAuthor" class="form-control" placeholder="Enter author name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="bookYear">Publication Year *</label>
+                        <input type="number" id="bookYear" class="form-control" placeholder="Enter publication year" min="1900" max="2030" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="bookImage">Book Cover Image URL *</label>
+                        <input type="url" id="bookImage" class="form-control" placeholder="Enter image URL" required>
+                    </div>
+                    
+                    <!-- PDF File Upload Section -->
+                    <div class="form-group">
+                        <label class="form-label">Upload PDF File *</label>
+                        <div class="file-upload-wrapper">
+                            <input type="file" id="pdfFile" class="file-upload-input" accept=".pdf" required>
+                            <button type="button" class="file-upload-button">
+                                <i class="fas fa-cloud-upload-alt me-1"></i>Browse
+                            </button>
+                        </div>
+                        <div id="pdfFileName" class="file-name">No file selected</div>
+                        
+                        <!-- Uploaded file info -->
+                        <div id="pdfFileInfo" class="file-info hidden">
+                            <i class="fas fa-file-pdf"></i>
+                            <div class="file-details">
+                                <div class="file-name-large" id="pdfDisplayName">filename.pdf</div>
+                                <div class="file-size" id="pdfFileSize">0 KB</div>
+                            </div>
+                            <button type="button" class="remove-file" id="removePdfFile">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        
+                        <div id="pdfUploadStatus" class="upload-status hidden"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Rating</label>
+                        <div class="rating-stars" id="ratingStars">
+                            <i class="far fa-star" data-rating="1"></i>
+                            <i class="far fa-star" data-rating="2"></i>
+                            <i class="far fa-star" data-rating="3"></i>
+                            <i class="far fa-star" data-rating="4"></i>
+                            <i class="far fa-star" data-rating="5"></i>
+                        </div>
+                        <input type="hidden" id="bookRating" value="★★★★★">
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-plus-circle me-2"></i>Add Book to Library
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Edit Book Modal -->
+            <div class="modal fade" id="editBookModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit Book</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="editBookForm">
+                                <input type="hidden" id="editBookIndex">
+                                <div class="form-group">
+                                    <label class="form-label" for="editBookTitle">Book Title *</label>
+                                    <input type="text" id="editBookTitle" class="form-control" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="editBookAuthor">Author *</label>
+                                    <input type="text" id="editBookAuthor" class="form-control" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="editBookYear">Publication Year *</label>
+                                    <input type="number" id="editBookYear" class="form-control" min="1900" max="2030" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="editBookImage">Book Cover Image URL *</label>
+                                    <input type="url" id="editBookImage" class="form-control" required>
+                                </div>
+                                
+                                <!-- PDF File Upload for Edit -->
+                                <div class="form-group">
+                                    <label class="form-label">Update PDF File (Optional)</label>
+                                    <div class="file-upload-wrapper">
+                                        <input type="file" id="editPdfFile" class="file-upload-input" accept=".pdf">
+                                        <button type="button" class="file-upload-button">
+                                            <i class="fas fa-cloud-upload-alt me-1"></i>Browse
+                                        </button>
+                                    </div>
+                                    <div id="editPdfFileName" class="file-name">No file selected</div>
+                                    
+                                    <!-- Current PDF info -->
+                                    <div id="currentPdfInfo" class="file-info">
+                                        <i class="fas fa-file-pdf"></i>
+                                        <div class="file-details">
+                                            <div class="file-name-large" id="currentPdfName">Current PDF</div>
+                                            <div class="file-size">Keep existing file</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- New uploaded file info -->
+                                    <div id="editPdfFileInfo" class="file-info hidden">
+                                        <i class="fas fa-file-pdf"></i>
+                                        <div class="file-details">
+                                            <div class="file-name-large" id="editPdfDisplayName">filename.pdf</div>
+                                            <div class="file-size" id="editPdfFileSize">0 KB</div>
+                                        </div>
+                                        <button type="button" class="remove-file" id="removeEditPdfFile">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    
+                                    <div id="editPdfUploadStatus" class="upload-status hidden"></div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Rating</label>
+                                    <div class="rating-stars" id="editRatingStars">
+                                        <i class="far fa-star" data-rating="1"></i>
+                                        <i class="far fa-star" data-rating="2"></i>
+                                        <i class="far fa-star" data-rating="3"></i>
+                                        <i class="far fa-star" data-rating="4"></i>
+                                        <i class="far fa-star" data-rating="5"></i>
+                                    </div>
+                                    <input type="hidden" id="editBookRating" value="★★★★★">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn-primary" id="saveEditBook">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- PDF Viewer Modal -->
+            <div class="modal fade pdf-viewer-modal" id="pdfViewerModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="pdf-actions">
+                            <h5 class="pdf-title" id="pdfViewerTitle">PDF Viewer</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <iframe id="pdfViewer" class="pdf-viewer" src=""></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <button class="btn-secondary" onclick="goToMainPage()">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Main Page
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Global books array
+        let books = [];
+        let uploadedPdfFile = null;
+        let editUploadedPdfFile = null;
+        
+        // Tab functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                document.getElementById(this.getAttribute('data-tab')).classList.add('active');
+            });
+        });
+        
+        // File upload functionality
+        document.getElementById('pdfFile').addEventListener('change', function(e) {
+            handleFileUpload(e, 'pdfFileInfo', 'pdfDisplayName', 'pdfFileSize', 'pdfUploadStatus');
+        });
+        
+        document.getElementById('editPdfFile').addEventListener('change', function(e) {
+            handleFileUpload(e, 'editPdfFileInfo', 'editPdfDisplayName', 'editPdfFileSize', 'editPdfUploadStatus', true);
+        });
+        
+        // Remove file buttons
+        document.getElementById('removePdfFile').addEventListener('click', function() {
+            removeUploadedFile('pdfFile', 'pdfFileInfo', 'pdfFileName');
+        });
+        
+        document.getElementById('removeEditPdfFile').addEventListener('click', function() {
+            removeUploadedFile('editPdfFile', 'editPdfFileInfo', 'editPdfFileName', true);
+        });
+        
+        function handleFileUpload(event, infoElementId, nameElementId, sizeElementId, statusElementId, isEdit = false) {
+            const file = event.target.files[0];
+            const statusElement = document.getElementById(statusElementId);
+            
+            if (!file) {
+                statusElement.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i>No file selected';
+                statusElement.className = 'upload-status upload-error';
+                statusElement.classList.remove('hidden');
+                return;
+            }
+            
+            // Check if file is PDF
+            if (file.type !== 'application/pdf') {
+                statusElement.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i>Please select a PDF file';
+                statusElement.className = 'upload-status upload-error';
+                statusElement.classList.remove('hidden');
+                return;
+            }
+            
+            // Check file size (max 10MB)
+            const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+            if (file.size > maxSize) {
+                statusElement.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i>File size must be less than 10MB';
+                statusElement.className = 'upload-status upload-error';
+                statusElement.classList.remove('hidden');
+                return;
+            }
+            
+            // Update file info display
+            const infoElement = document.getElementById(infoElementId);
+            const nameElement = document.getElementById(nameElementId);
+            const sizeElement = document.getElementById(sizeElementId);
+            
+            nameElement.textContent = file.name;
+            sizeElement.textContent = formatFileSize(file.size);
+            
+            // Show success status
+            statusElement.innerHTML = '<i class="fas fa-check-circle me-2"></i>File selected successfully';
+            statusElement.className = 'upload-status upload-success';
+            statusElement.classList.remove('hidden');
+            
+            // Show file info
+            infoElement.classList.remove('hidden');
+            
+            // Store the file for later use
+            if (isEdit) {
+                editUploadedPdfFile = file;
+            } else {
+                uploadedPdfFile = file;
+            }
+            
+            // Update file name display
+            const fileNameElement = document.getElementById(isEdit ? 'editPdfFileName' : 'pdfFileName');
+            fileNameElement.textContent = `Selected: ${file.name}`;
+        }
+        
+        function removeUploadedFile(inputId, infoElementId, fileNameElementId, isEdit = false) {
+            const input = document.getElementById(inputId);
+            const infoElement = document.getElementById(infoElementId);
+            const fileNameElement = document.getElementById(fileNameElementId);
+            const statusElement = document.getElementById(isEdit ? 'editPdfUploadStatus' : 'pdfUploadStatus');
+            
+            // Reset file input
+            input.value = '';
+            
+            // Hide file info
+            infoElement.classList.add('hidden');
+            
+            // Reset file name display
+            fileNameElement.textContent = 'No file selected';
+            
+            // Hide status
+            statusElement.classList.add('hidden');
+            
+            // Clear stored file
+            if (isEdit) {
+                editUploadedPdfFile = null;
+            } else {
+                uploadedPdfFile = null;
+            }
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Rating stars functionality
+        function initializeRatingStars(starsContainer, ratingInput) {
+            const stars = starsContainer.querySelectorAll('i');
+            
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const rating = this.getAttribute('data-rating');
+                    updateStars(stars, rating, ratingInput);
+                });
+            });
+            
+            return stars;
+        }
+        
+        function updateStars(stars, rating, ratingInput) {
+            stars.forEach(star => {
+                if (star.getAttribute('data-rating') <= rating) {
+                    star.classList.remove('far');
+                    star.classList.add('fas', 'active');
+                } else {
+                    star.classList.remove('fas', 'active');
+                    star.classList.add('far');
+                }
+            });
+            
+            // Update hidden input with star representation
+            let starsText = '';
+            for (let i = 0; i < 5; i++) {
+                starsText += i < rating ? '★' : '☆';
+            }
+            ratingInput.value = starsText;
+        }
+        
+        // Initialize rating stars for add form
+        const addStars = initializeRatingStars(
+            document.getElementById('ratingStars'), 
+            document.getElementById('bookRating')
+        );
+        
+        // Initialize rating stars for edit form
+        const editStars = initializeRatingStars(
+            document.getElementById('editRatingStars'), 
+            document.getElementById('editBookRating')
+        );
+        
+        // Load books from localStorage
+        function loadBooks() {
+            const savedBooks = localStorage.getItem('books');
+            if (savedBooks) {
+                books = JSON.parse(savedBooks);
+            }
+            renderBooksList();
+        }
+        
+        // Render books list
+        function renderBooksList() {
+            const container = document.getElementById('booksListContainer');
+            
+            if (books.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-book"></i>
+                        <h4>No Books in Library</h4>
+                        <p>Add your first book to get started</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            books.forEach((book, index) => {
+                const bookItem = document.createElement('div');
+                bookItem.classList.add('book-item');
+                bookItem.innerHTML = `
+                    <div class="book-image-container">
+                        <img src="${book.img}" alt="${book.title}">
+                    </div>
+                    <div class="book-info">
+                        <h4>${book.title}</h4>
+                        <p><strong>Author:</strong> ${book.author}</p>
+                        <p><strong>Year:</strong> ${book.year}</p>
+                        <p><strong>Rating:</strong> ${book.rating}</p>
+                    </div>
+                    <div class="book-actions">
+                        <button class="btn-view" onclick="viewPdf(${index})">
+                            <i class="fas fa-eye me-1"></i>View PDF
+                        </button>
+                        <button class="btn-edit" onclick="editBook(${index})">
+                            <i class="fas fa-edit me-1"></i>Edit
+                        </button>
+                        <button class="btn-remove" onclick="removeBook(${index})">
+                            <i class="fas fa-trash me-1"></i>Remove
+                        </button>
+                    </div>
+                `;
+                container.appendChild(bookItem);
+            });
+        }
+        
+        // Add new book
+        document.getElementById('addBookForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('bookTitle').value;
+            const author = document.getElementById('bookAuthor').value;
+            const year = document.getElementById('bookYear').value;
+            const image = document.getElementById('bookImage').value;
+            const rating = document.getElementById('bookRating').value;
+            
+            if (!title || !author || !year || !image || !uploadedPdfFile) {
+                showError('Please fill in all required fields and upload a PDF file');
+                return;
+            }
+            
+            // Convert PDF file to base64 for storage
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const pdfDataUrl = e.target.result;
+                
+                // Create book object with PDF data
+                const newBook = {
+                    title: title,
+                    author: author,
+                    year: parseInt(year),
+                    img: image,
+                    pdf: uploadedPdfFile.name,
+                    pdfData: pdfDataUrl, // Store the PDF as base64 data URL
+                    rating: rating
+                };
+                
+                // Add to books array
+                books.push(newBook);
+                
+                // Save to localStorage
+                localStorage.setItem('books', JSON.stringify(books));
+                
+                // Reset form
+                document.getElementById('addBookForm').reset();
+                removeUploadedFile('pdfFile', 'pdfFileInfo', 'pdfFileName');
+                updateStars(addStars, 5, document.getElementById('bookRating'));
+                
+                // Show success message
+                showSuccess('Book added successfully!');
+                
+                // Update books list
+                renderBooksList();
+                
+                // Switch to books list tab
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.querySelector('[data-tab="books-list"]').classList.add('active');
+                document.getElementById('books-list').classList.add('active');
+            };
+            
+            reader.readAsDataURL(uploadedPdfFile);
+        });
+        
+        // Edit book
+        function editBook(index) {
+            const book = books[index];
+            
+            // Fill form with book data
+            document.getElementById('editBookIndex').value = index;
+            document.getElementById('editBookTitle').value = book.title;
+            document.getElementById('editBookAuthor').value = book.author;
+            document.getElementById('editBookYear').value = book.year;
+            document.getElementById('editBookImage').value = book.img;
+            
+            // Set current PDF info
+            document.getElementById('currentPdfName').textContent = book.pdf || 'Current PDF';
+            
+            // Set rating stars
+            const starCount = (book.rating.match(/★/g) || []).length;
+            updateStars(editStars, starCount, document.getElementById('editBookRating'));
+            
+            // Reset edit file upload
+            removeUploadedFile('editPdfFile', 'editPdfFileInfo', 'editPdfFileName', true);
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('editBookModal'));
+            modal.show();
+        }
+        
+        // Save edited book
+        document.getElementById('saveEditBook').addEventListener('click', function() {
+            const index = document.getElementById('editBookIndex').value;
+            const title = document.getElementById('editBookTitle').value;
+            const author = document.getElementById('editBookAuthor').value;
+            const year = document.getElementById('editBookYear').value;
+            const image = document.getElementById('editBookImage').value;
+            const rating = document.getElementById('editBookRating').value;
+            
+            if (!title || !author || !year || !image) {
+                showError('Please fill in all required fields');
+                return;
+            }
+            
+            // If a new PDF file was uploaded, convert it to base64
+            if (editUploadedPdfFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const pdfDataUrl = e.target.result;
+                    
+                    // Update book with new PDF
+                    books[index] = {
+                        title: title,
+                        author: author,
+                        year: parseInt(year),
+                        img: image,
+                        pdf: editUploadedPdfFile.name,
+                        pdfData: pdfDataUrl,
+                        rating: rating
+                    };
+                    
+                    // Save to localStorage
+                    localStorage.setItem('books', JSON.stringify(books));
+                    
+                    // Hide modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editBookModal'));
+                    modal.hide();
+                    
+                    // Show success message
+                    showSuccess('Book updated successfully!');
+                    
+                    // Update books list
+                    renderBooksList();
+                };
+                
+                reader.readAsDataURL(editUploadedPdfFile);
+            } else {
+                // Update book without changing PDF
+                books[index] = {
+                    ...books[index],
+                    title: title,
+                    author: author,
+                    year: parseInt(year),
+                    img: image,
+                    rating: rating
+                };
+                
+                // Save to localStorage
+                localStorage.setItem('books', JSON.stringify(books));
+                
+                // Hide modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editBookModal'));
+                modal.hide();
+                
+                // Show success message
+                showSuccess('Book updated successfully!');
+                
+                // Update books list
+                renderBooksList();
+            }
+        });
+        
+        // View PDF
+        function viewPdf(index) {
+            const book = books[index];
+            
+            if (!book.pdfData) {
+                showError('PDF data not found for this book');
+                return;
+            }
+            
+            // Set PDF title
+            document.getElementById('pdfViewerTitle').textContent = `PDF Viewer - ${book.title}`;
+            
+            // Set PDF source
+            document.getElementById('pdfViewer').src = book.pdfData;
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('pdfViewerModal'));
+            modal.show();
+        }
+        
+        // Remove book
+        function removeBook(index) {
+            if (confirm("Are you sure you want to remove this book from the library?")) {
+                books.splice(index, 1);
+                
+                // Save to localStorage
+                localStorage.setItem('books', JSON.stringify(books));
+                
+                // Show success message
+                showSuccess('Book removed successfully!');
+                
+                // Update books list
+                renderBooksList();
+            }
+        }
+        
+        // Show success message
+        function showSuccess(message) {
+            const alert = document.getElementById('successAlert');
+            alert.innerHTML = `<i class="fas fa-check-circle me-2"></i>${message}`;
+            alert.classList.remove('hidden');
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                alert.classList.add('hidden');
+            }, 3000);
+        }
+        
+        // Show error message
+        function showError(message) {
+            const alert = document.getElementById('errorAlert');
+            alert.innerHTML = `<i class="fas fa-exclamation-circle me-2"></i>${message}`;
+            alert.classList.remove('hidden');
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                alert.classList.add('hidden');
+            }, 3000);
+        }
+        
+        // Go to main page
+        function goToMainPage() {
+            window.location.href = 'index.html';
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadBooks();
+        });
+    </script>
+</body>
+</html>

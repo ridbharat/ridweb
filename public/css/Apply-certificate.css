@@ -1,0 +1,372 @@
+   @import url("https://fonts.googleapis.com/css2?family=Hind:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+:root {
+  --header-color: #0a66c2;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "poppins", sans-serif;
+}
+body {
+  overflow-x: hidden;
+  background-color: #f5f7fa;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #063159;
+  box-shadow: 0 2px 4px rgba(20, 4, 102, 0.587);
+  height: 40px;
+  width: 100%;
+  font-size: 14px;
+}
+.web-text p {
+  display: inline-block;
+  color: white;
+  font-size: 0.6rem;
+  font-weight: 700;
+}
+.web-text p:first-child {
+  margin-left: 40px;
+}
+.web-text p span {
+  font-weight: 300;
+}
+.web-text p::after {
+  content: "|";
+  margin: 0 10px;
+  color: white;
+  font-weight: 300;
+}
+.web-text p:last-child::after {
+  content: "";
+}
+.right-text {
+  display: flex;
+}
+
+.right-text .link {
+  display: flex;
+  align-items: center;
+}
+
+.right-text .link .svg-object {
+  width: 1rem;
+  height: 1rem;
+}
+
+.right-text .link {
+  color: white;
+  font-size: 0.6rem;
+  transition: all 0.3s ease;
+  gap: 5px;
+  text-decoration: none;
+  cursor: pointer;
+}
+.right-text a:last-child {
+  margin-right: 40px;
+}
+.right-text a::after {
+  content: "|";
+  margin: 0 8px;
+  color: white;
+  font-weight: 300;
+}
+.right-text a:last-child::after {
+  content: "";
+}
+
+.main-content {
+  width: 100%;
+  min-height: calc(100vh - 40px);
+  padding: 20px;
+}
+
+.logo{
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 100px;
+  margin-bottom: 20px;
+}
+
+.logo img {
+  height: 82px;
+}
+
+.form-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.form-section {
+  flex: 1;
+  min-width: 300px;
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.info-section {
+  flex: 1;
+  min-width: 300px;
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #063159;
+}
+
+h1 {
+  color: #063159;
+  margin-bottom: 20px;
+  font-size: 32px;
+  text-align: center;
+  font-weight: 700;
+}
+
+h2 {
+  color: #063159;
+  margin-bottom: 25px;
+  font-size: 24px;
+  border-bottom: 2px solid #0a66c2;
+  padding-bottom: 10px;
+  font-weight: 600;
+}
+
+h3 {
+  color: #063159;
+  margin: 25px 0 15px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+p {
+  margin-bottom: 15px;
+  color: #555;
+  line-height: 1.6;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #063159;
+}
+
+label span {
+  color: #e53e3e;
+  font-weight: bold;
+  margin-left: 2px;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: border 0.3s, box-shadow 0.3s;
+  background-color: #f8f9fa;
+}
+
+input:focus, select:focus {
+  border-color: #0a66c2;
+  box-shadow: 0 0 0 3px rgba(10, 102, 194, 0.2);
+  outline: none;
+  background-color: white;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+button {
+  background: linear-gradient(135deg, #063159 0%, #0a66c2 100%);
+  color: white;
+  border: none;
+  padding: 14px 35px;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+  background: linear-gradient(135deg, #0a66c2 0%, #063159 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+.material-symbols-outlined {
+  font-size: 20px;
+}
+
+ul {
+  padding-left: 20px;
+  margin-bottom: 20px;
+}
+
+li {
+  margin-bottom: 10px;
+  color: #555;
+  line-height: 1.6;
+}
+
+.important-note {
+  background-color: #e8f4ff;
+  border-left: 4px solid #0a66c2;
+  padding: 15px;
+  margin-top: 25px;
+  border-radius: 0 5px 5px 0;
+}
+
+.important-note p {
+  margin-bottom: 5px;
+  color: #063159;
+}
+
+.success-message {
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+  padding: 15px;
+  border-radius: 5px;
+  margin-top: 20px;
+  display: none;
+}
+
+.required-fields {
+  font-size: 14px;
+  color: #777;
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* New styles for better layout */
+.form-header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding-top: 20px;
+}
+
+.form-title {
+  color: #063159;
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.form-subtitle {
+  color: #666;
+  font-size: 16px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Styling for contact info section */
+.contact-info {
+  background-color: #f0f7ff;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  border-left: 3px solid #0a66c2;
+}
+
+.contact-info p {
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #063159;
+}
+
+@media (max-width: 768px) {
+  .header {
+    height: auto;
+    padding: 10px 0;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .web-text p:first-child {
+    margin-left: 0;
+  }
+  
+  .web-text p {
+    display: block;
+    text-align: center;
+    margin-bottom: 5px;
+  }
+  
+  .web-text p::after {
+    display: none;
+  }
+  
+  .right-text {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .right-text a:last-child {
+    margin-right: 0;
+  }
+  
+  .right-text a::after {
+    display: none;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .form-section, .info-section {
+    padding: 20px;
+  }
+  
+  h1 {
+    font-size: 24px;
+  }
+  
+  .form-container {
+    gap: 20px;
+  }
+}
+
+/* Animation for form elements */
+.animate__animated {
+  animation-duration: 0.5s;
+}

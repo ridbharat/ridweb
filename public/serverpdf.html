@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Viewer</title>
+  <script src="./pdf.js"></script>
+  <style>
+    body {
+      margin: 0;
+      background: #f0f0f0;
+    }
+
+    #pdf-canvas {
+      display: block;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+
+<body>
+
+  <canvas id="pdf-canvas"></canvas>
+
+  <script>
+    const url = '/get-pdf'; // Endpoint to fetch the secured PDF
+    const pdfCanvas = document.getElementById('pdf-canvas');
+    const canvasContext = pdfCanvas.getContext('2d');
+
+    // Load the PDF using PDF.js
+    const loadingTask = pdfjsLib.getDocument(url);
+
+    loadingTask.promise.then(pdf => {
+      console.log(`PDF loaded with ${pdf.numPages} pages`);
+
+      // Render the first page
+      pdf.getPage(1).then(page => {
+        const viewport = page.getViewport({ scale: 1.5 });
+        pdfCanvas.width = viewport.width;
+        pdfCanvas.height = viewport.height;
+
+        const renderContext = {
+          canvasContext: canvasContext,
+          viewport: viewport
+        };
+        page.render(renderContext);
+      });
+    }).catch(err => {
+      console.error('Error loading PDF:', err);
+    });
+
+    // Disable right-click
+    document.addEventListener('contextmenu', event => event.preventDefault());
+  </script>
+</body>
+
+</html>

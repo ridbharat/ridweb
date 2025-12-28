@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eBooks Library</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body>
+    <h1>Search eBooks</h1>
+
+    <!-- Search Form -->
+    <form action="/search" method="GET">
+        <input type="text" name="q" placeholder="Search for books, authors..." value="<%= searchQuery %>" required>
+        <button type="submit">Search</button>
+    </form>
+
+    <h2>Search Results for "<%= searchQuery %>"</h2>
+    <ul>
+        <% if (results.length> 0) { %>
+            <% results.forEach(book=> { %>
+                <li>
+                    <%= book.title %> by <%= book.author %>
+                </li>
+                <% }) %>
+                    <% } else { %>
+                        <li>No results found.</li>
+                        <% } %>
+    </ul>
+
+    <div class="bookcard-holder">
+        <% results.forEach(book=> { %>
+            <div class="book-card1">
+                <a href="<%= book.link %>" target="_blank">
+                    <img class="img-pdf" src="<%= book.image %>" alt="<%= book.title %> Cover">
+                </a>
+                <div class="title-desc1">
+                    <a class="readbtn" href="<%= book.link %>" target="_blank">OPEN-EBOOK</a>
+                    <h3>
+                        <%= book.title %>
+                    </h3>
+                    <p>Publish Year: <%= book.year %>
+                    </p>
+                </div>
+            </div>
+            <% }); %>
+    </div>
+</body>
+
+</html>

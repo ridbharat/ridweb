@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>css pdf</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=downloading" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        iframe {
+            flex: 1;
+            width: 100%;
+            border: none;
+        }
+
+        .download-btn {
+            position: fixed;
+            bottom: 20px;
+            /* Position 20px above the bottom */
+            right: 20px;
+            /* Position 20px from the right */
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            /* Add some padding for better appearance */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            z-index: 1000;
+            /* Ensure it appears above other elements */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .download-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <iframe src="../public/pdf-link/csspdf.html"></iframe>
+
+
+
+    <script>
+        function downloadPDF() {
+
+            const link = document.createElement('a');
+            link.href = 'e-bookpdf/HTML E-BOOK.pdf'; // PDF file path
+            link.download = 'e-bookpdf/HTML E-BOOK.pdf'; // File name to be used when saving
+            link.click();
+        }
+    </script>
+</body>
+
+</html>
