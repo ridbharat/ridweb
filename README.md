@@ -4,3 +4,8 @@
 add assets into public/assets
 
 
+### we serve ejs not html 
+from views folder
+
+### we serve just static
+from public
