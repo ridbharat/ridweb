@@ -125,7 +125,7 @@ const configureMiddleware = () => {
 // ========== VIEW ENGINE SETUP ==========
 const configureViews = () => {
    app.set("view engine", "ejs");
-   app.set("views", [path.join(__dirname, "views", 'ebook'), path.join(__dirname, "views"), path.join(__dirname, "views", 'pages')]);
+   app.set("views",  path.join(__dirname, "views"));
   app.use(express.static(path.join(__dirname, "public")));
 };
 
