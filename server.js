@@ -6,6 +6,8 @@ const mongoose = require('mongoose');
 const { authenticateJWT } = require('./middleware/auth');
 const Organisation = require('./schema/models/organisation.generated');
 const Book = require('./schema/models/books.generated');
+const { getEbookUrl, downloadEbookToTemp, cleanupTempFiles } = require('./utils/backblazeEbook');
+const PDF = require('./schema/models/pdf.generated');
 
 // Initialize express app
 const app = express();
@@ -133,6 +135,136 @@ const roleMiddleware = (role) => (req, res, next) => {
 app.get("/api/util/duration", (req, res) => {
   const duration = process.env.DURATION || "30"; // Default 30 days
   res.json({ duration });
+});
+
+// Serve PDF from Backblaze via temp folder
+app.get("/api/pdf/:filename", async (req, res) => {
+  const filename = decodeURIComponent(req.params.filename);
+
+  // Validate filename (basic security)
+  if (!filename || filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
+    return res.status(400).json({ error: 'Invalid filename' });
+  }
+
+  console.log(`Request for PDF: ${filename}`);
+
+  try {
+    // Set headers immediately to prevent timeout
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `inline; filename="${filename}"`);
+    res.setHeader('Cache-Control', 'private, max-age=3600'); // Cache for 1 hour
+
+    // Download file to temp folder if not already there (with timeout)
+    const downloadPromise = downloadEbookToTemp(filename);
+
+    // Set a reasonable timeout for the download
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Download timeout')), 45000); // 45 seconds
+    });
+
+    const tempFilePath = await Promise.race([downloadPromise, timeoutPromise]);
+
+    console.log(`Serving PDF from: ${tempFilePath}`);
+
+    // Check if file exists before streaming
+    const fs = require('fs');
+    if (!fs.existsSync(tempFilePath)) {
+      throw new Error('File not found after download');
+    }
+
+    // Stream the file
+    const fileStream = fs.createReadStream(tempFilePath);
+
+    fileStream.on('error', (error) => {
+      console.error(`Error streaming ${filename}:`, error);
+      if (!res.headersSent) {
+        res.status(500).json({ error: 'Error serving file' });
+      }
+    });
+
+    fileStream.on('end', () => {
+      console.log(`Successfully served PDF: ${filename}`);
+    });
+
+    fileStream.pipe(res);
+
+  } catch (error) {
+    console.error(`PDF serving error for ${filename}:`, error.message);
+
+    if (!res.headersSent) {
+      // If download failed, try to serve from local storage as fallback
+      const localPath = path.join(__dirname, 'public', 'uploads', 'pdfs', filename);
+
+      try {
+        const fs = require('fs');
+        if (fs.existsSync(localPath)) {
+          console.log(`Serving from local fallback: ${localPath}`);
+          res.setHeader('Content-Type', 'application/pdf');
+          res.setHeader('Content-Disposition', `inline; filename="${filename}"`);
+          fs.createReadStream(localPath).pipe(res);
+          return;
+        }
+      } catch (localError) {
+        console.error('Local fallback also failed:', localError.message);
+      }
+
+      res.status(404).json({
+        error: 'PDF not found',
+        message: error.message
+      });
+    }
+  }
+
+  // Clean up old temp files in background (don't wait for response)
+  setTimeout(() => {
+    cleanupTempFiles().catch(console.warn);
+  }, 5000);
+});
+
+// Books API - Fetch books from MongoDB
+app.get("/api/books", async (req, res) => {
+  try {
+    const books = await Book.find({})
+      .sort({ createdAt: -1 }) // Sort by creation date, newest first
+      .select('title description pdfFile.filename coverImage rating category fileSize viewCount downloadCount createdAt') // Select only needed fields
+      .limit(100); // Limit to 100 books for performance
+
+    // Transform the data to match frontend expectations
+    const transformedBooks = books.map((book, index) => {
+      // Use our API endpoint for PDF serving
+      const filename = book.pdfFile?.filename;
+      const pdfUrl = filename ? `/api/pdf/${encodeURIComponent(filename)}` : null;
+
+      return {
+        index: index,
+        id: book._id.toString(),
+        title: book.title,
+        description: book.description || `Learn ${book.title.split(" ")[0]}.`,
+        author: "Er. Rajesh Prasad", // Default author since not in schema
+        year: book.createdAt ? new Date(book.createdAt).getFullYear() : new Date().getFullYear(),
+        img: book.coverImage ? `/ebook/uploads/covers/${book.coverImage}` : "https://via.placeholder.com/200x280/667eea/FFFFFF?text=No+Cover",
+        pdf: pdfUrl,
+        rating: "★★★★" + (book.rating >= 4.5 ? "★" : "☆"), // Convert numeric rating to stars
+        category: book.category,
+        fileSize: book.fileSize || 0,
+        viewCount: book.viewCount || 0,
+        downloadCount: book.downloadCount || 0
+      };
+    });
+
+    res.json({
+      success: true,
+      books: transformedBooks,
+      total: transformedBooks.length
+    });
+  } catch (error) {
+    console.error('Error fetching books:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch books',
+      books: []
+    });
+  }
 });
 
 // ========== VIEW ROUTES ==========

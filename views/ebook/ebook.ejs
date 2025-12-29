@@ -703,10 +703,10 @@
                 const card = document.createElement("div");
                 card.classList.add("book-card-sidebar");
                 card.innerHTML = `
-                    <img src="${book.img}" alt="${book.title}">
+                    <img src="${book.img}" alt="${book.title}" onerror="this.src='https://via.placeholder.com/60x80/667eea/FFFFFF?text=No+Cover'">
                     <div class="title-desc">
                         <h3>${book.title}</h3>
-                        <p class="desc">Learn ${book.title.split(" ")[0]}.</p>
+                        <p class="desc">${book.description || `Learn ${book.title.split(" ")[0]}.`}</p>
                         <p class="author-name">Author: ${book.author}</p>
                         <div class="rating">${book.rating}</div>
                         <div class="sidebar-btns">
@@ -723,26 +723,23 @@
 
         // Open PDF in modal and update reading history
         function openPDF(bookIndex) {
-            const book = books.find(b => b.index === bookIndex);
+            const book = books[bookIndex]; // Now using array index directly
             if (!book) {
                 alert("Book not found!");
                 return;
             }
-            
+
             const iframe = document.getElementById("pdfFrame");
-            
-            // Check if PDF data is available
-            if (book.pdfData) {
-                // Set PDF source from base64 data
-                iframe.src = book.pdfData;
-            } else if (book.pdf) {
-                // If it's a URL, use it directly
+
+            // Check if PDF is available
+            if (book.pdf) {
+                // Use the PDF path from database
                 iframe.src = book.pdf;
             } else {
                 alert("PDF not available for this book");
                 return;
             }
-            
+
             // Update modal title
             document.getElementById("pdfModalTitle").textContent = `Reading: ${book.title}`;
 
@@ -757,7 +754,7 @@
 
             // Show modal
             document.getElementById('pdfModal').style.display = 'block';
-            
+
             // Update reading history
             updateReadingHistory(bookIndex);
         }
@@ -789,16 +786,16 @@
 
         // Update reading history
         function updateReadingHistory(bookIndex) {
-            const book = books.find(b => b.index === bookIndex);
+            const book = books[bookIndex];
             if (!book) return;
-            
+
             // Check if book is already in history
             const existingIndex = readingHistory.findIndex(item => item.index === bookIndex);
-            
+
             // Get current date and time
             const now = new Date();
             const formattedDate = `${now.toLocaleDateString()} ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
-            
+
             if (existingIndex !== -1) {
                 // Update existing entry
                 readingHistory[existingIndex].lastRead = formattedDate;
@@ -806,6 +803,7 @@
                 // Add new entry
                 readingHistory.push({
                     index: bookIndex,
+                    id: book.id,
                     title: book.title,
                     img: book.img,
                     author: book.author,
@@ -813,10 +811,10 @@
                     lastRead: formattedDate
                 });
             }
-            
+
             // Update sidebar
             renderSidebarBooks();
-            
+
             // Save to localStorage
             localStorage.setItem('readingHistory', JSON.stringify(readingHistory));
         }
@@ -824,13 +822,27 @@
         // Disable right-click on modal itself
         document.getElementById('pdfModal').addEventListener('contextmenu', e => e.preventDefault());
 
-        // Load books and reading history from localStorage
-        function loadData() {
-            const savedBooks = localStorage.getItem('books');
-            if (savedBooks) {
-                books = JSON.parse(savedBooks);
+        // Load books from API
+        async function loadBooksFromAPI() {
+            try {
+                const response = await fetch('/api/books');
+                const data = await response.json();
+
+                if (data.success && data.books) {
+                    books = data.books;
+                    console.log(`Loaded ${books.length} books from database`);
+                } else {
+                    console.error('Failed to load books from API:', data.error);
+                    books = [];
+                }
+            } catch (error) {
+                console.error('Error fetching books from API:', error);
+                books = [];
             }
-            
+        }
+
+        // Load reading history from localStorage
+        function loadReadingHistory() {
             const savedHistory = localStorage.getItem('readingHistory');
             if (savedHistory) {
                 readingHistory = JSON.parse(savedHistory);
@@ -844,7 +856,7 @@
                 alert("No reading history to clear.");
                 return;
             }
-            
+
             if (confirm("Are you sure you want to clear all reading history?")) {
                 readingHistory = [];
                 renderSidebarBooks();
@@ -852,137 +864,6 @@
                 localStorage.setItem('readingHistory', JSON.stringify(readingHistory));
             }
         });
-
-        // Add sample books if none exist
-        function addSampleBooks() {
-            if (books.length === 0) {
-                books = [
-                    {
-                        index: 0,
-                        title: "JavaScript: The Good Parts",
-                        author: "Douglas Crockford",
-                        year: 2008,
-                        img: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-                        pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-                        rating: "★★★★★",
-                        category: "web-development"
-                    },
-                    {
-                        index: 1,
-                        title: "Clean Code",
-                        author: "Robert C. Martin",
-                        year: 2008,
-                        img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-                        pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-                        rating: "★★★★☆",
-                        category: "programming"
-                    },
-                    {
-                        index: 2,
-                        title: "The Pragmatic Programmer",
-                        author: "Andrew Hunt, David Thomas",
-                        year: 1999,
-                        img: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-                        pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-                        rating: "★★★★★",
-                        category: "programming"
-                    },
-                    {
-                        index: 3,
-                        title: "Python Crash Course",
-                        author: "Eric Matthes",
-                        year: 2015,
-                        img: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-                        pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-                        rating: "★★★★★",
-                        category: "python"
-                    },
-                    {
-                        index: 4,
-                        title: "Learning Python",
-                        author: "Mark Lutz",
-                        year: 2013,
-                        img: "https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-                        pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-                        rating: "★★★★☆",
-                        category: "python"
-                    },
-                    {
-                        index: 5,
-                        title: "Database System Concepts",
-                        author: "Abraham Silberschatz",
-                        year: 2019,
-                        img: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-                        pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-                        rating: "★★★★★",
-                        category: "database"
-                    },
-                    {
-                        index: 6,
-                        title: "SQL in 10 Minutes",
-                        author: "Ben Forta",
-                        year: 2019,
-                        img: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-                        pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-                        rating: "★★★★☆",
-                        category: "database"
-                    },
-                    {
-                        index: 7,
-                        title: "Computer Networking",
-                        author: "James Kurose",
-                        year: 2017,
-                        img: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-                        pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-                        rating: "★★★★★",
-                        category: "network"
-                    },
-                    {
-                        index: 8,
-                        title: "Network Security Essentials",
-                        author: "William Stallings",
-                        year: 2016,
-                        img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-                        pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-                        rating: "★★★★☆",
-                        category: "network"
-                    },
-                    {
-                        index: 9,
-                        title: "The Web Application Hacker's Handbook",
-                        author: "Dafydd Stuttard",
-                        year: 2011,
-                        img: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-                        pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-                        rating: "★★★★★",
-                        category: "cyber"
-                    },
-                    {
-                        index: 10,
-                        title: "Hacking: The Art of Exploitation",
-                        author: "Jon Erickson",
-                        year: 2008,
-                        img: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-                        pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-                        rating: "★★★★☆",
-                        category: "cyber"
-                    },
-                    {
-                        index: 11,
-                        title: "HTML and CSS: Design and Build Websites",
-                        author: "Jon Duckett",
-                        year: 2011,
-                        img: "https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
-                        pdf: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-                        rating: "★★★★★",
-                        category: "web-development"
-                    }
-                ];
-                
-                // Save to localStorage
-                localStorage.setItem('books', JSON.stringify(books));
-            }
-        }
 
         // Handle category filter change
         document.getElementById('categoryFilter').addEventListener('change', function(e) {
@@ -1004,12 +885,15 @@
         }
 
         // Initial render
-        document.addEventListener('DOMContentLoaded', function() {
-            loadData();
-            addSampleBooks();
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Load data from API and localStorage
+            await loadBooksFromAPI();
+            loadReadingHistory();
+
+            // Render books and sidebar
             renderBooks();
             renderSidebarBooks();
-            
+
             // Set initial active category display
             const activeCategoryElement = document.getElementById("activeCategory");
             activeCategoryElement.innerHTML = `Showing all categories <span class="books-count">${books.length}</span>`;
